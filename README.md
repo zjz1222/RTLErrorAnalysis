@@ -1,6 +1,8 @@
 # RTLErrorAnalysis
 In this work, we systematically categorize the causes of LLM-generated RTL errors and corresponding correction methods based on VerilogEval-Human benchmark.
 
+## How to Use
+
 ### 1. Error Analysis
 
 gpt-3.5-turbo: 89 faulty designs (including manually annotated labels)
