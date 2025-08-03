@@ -1,6 +1,23 @@
 # RTLErrorAnalysis
 In this work, we systematically categorize the causes of LLM-generated RTL errors and corresponding correction methods based on VerilogEval-Human benchmark.
 
+## SetUp
+1. Create a Virtual Environment
+```
+# For Windows
+python -m venv venv
+venv\Scripts\activate  # Activate
+
+# For macOS/Linux
+python3 -m venv venv
+source venv/bin/activate  # Activate
+```
+2. Install Dependencies
+```
+pip install -r requirements.txt
+```
+You can call the model via a remote API, or deploy your own model on your server/host for local use. (config.py: local = True means use local model)
+
 ## How to Use
 
 ### 1. Error Analysis
