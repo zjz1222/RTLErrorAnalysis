@@ -1,0 +1,33 @@
+[Keyword]: pipo
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a Parallel In Parallel Out (PIPO) shift register. It captures an 8-bit input data and outputs it in parallel. The register can be reset to zero or loaded with new data based on control signals.
+
+[Input Signal Description]:
+- clk: Clock signal that triggers the data capture on its rising edge.
+- rst: Reset signal that, when high, resets the output q to zero.
+- l: Load signal that, when high, allows the input data d to be loaded into the output q.
+- d[7:0]: 8-bit input data that is loaded into the register when the load signal is active.
+
+[Output Signal Description]:
+- q[7:0]: 8-bit output that holds the data captured from the input d when the load signal is active. It is reset to zero when the reset signal is high.
+
+
+[Design Detail]:
+//PIPO
+module s1(rst,d,clk,q,l);
+
+input clk,l,rst;
+input [7:0] d;
+output reg [7:0] q;
+
+always @(posedge clk)
+begin
+if(rst)
+q=0;
+else if(l)
+q=d;
+end
+endmodule

@@ -1,0 +1,47 @@
+[Keyword]: Rotate100high
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a 100-bit shift register with load and enable control. The register can load new data or shift its contents left or right based on the enable signals.
+
+[Input Signal Description]:
+- `clk`: Clock signal that triggers the register operations on its rising edge.
+- `load`: Control signal to load new data into the register when high.
+- `ena[1:0]`: 2-bit enable signal that determines the direction of the shift operation. If `ena` is `01`, the register shifts right; if `ena` is `10`, the register shifts left.
+- `data[99:0]`: 100-bit input data to be loaded into the register when `load` is high.
+
+[Output Signal Description]:
+- `q[99:0]`: 100-bit output representing the current state of the register. It holds the loaded data or the shifted data based on the control signals.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input load,
+    input [1:0] ena,
+    input [99:0] data,
+    output reg [99:0] q); 
+
+    always @(posedge clk) begin
+        if(load == 1) begin
+            q = data;
+        end
+        else begin
+            if(ena[0]^ena[1]) begin
+                case (ena)
+                    /*right*/
+                    2'b01: begin
+                        q <= {q[0], q[99:1]};
+                    end
+                    /*left*/
+                    2'b10: begin
+                        q <= {q[98:0], q[99]};
+                    end
+                endcase
+            end
+        end
+    end
+    
+endmodule
+```

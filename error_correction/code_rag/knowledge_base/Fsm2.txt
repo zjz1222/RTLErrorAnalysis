@@ -1,0 +1,52 @@
+[Keyword]: Fsm2
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a JK flip-flop with an asynchronous reset. The JK flip-flop is a type of sequential logic circuit that can toggle its output state based on the inputs J and K. The circuit transitions between two states, ON and OFF, depending on the values of J and K. The asynchronous reset allows the flip-flop to be reset to the OFF state regardless of the clock signal.
+
+[Input Signal Description]:
+- clk: Clock signal that synchronizes the state transitions.
+- areset: Asynchronous reset signal that forces the state to OFF when asserted.
+- j: Input signal that, when high, can set the state to ON if the current state is OFF.
+- k: Input signal that, when high, can reset the state to OFF if the current state is ON.
+
+[Output Signal Description]:
+- out: Output signal that reflects the current state of the flip-flop. It is high when the state is ON and low when the state is OFF.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input areset,    // Asynchronous reset to OFF
+    input j,
+    input k,
+    output out); //  
+
+    parameter OFF = 0, ON = 1; 
+    reg state, nextstate;
+
+    always @(*) begin
+        // State transition logic
+        case (state)
+            ON: nextstate <= k ? OFF : ON;
+            OFF: nextstate <= j ? ON : OFF;
+        endcase
+    end
+
+    always @(posedge clk, posedge areset) begin
+        // State flip-flops with asynchronous reset
+        if (areset) begin
+            state <= OFF;
+        end
+        else begin
+            state <= nextstate;
+        end
+    end
+
+    // Output logic
+    // assign out = (state == ...);
+    assign out = (state == ON);
+
+endmodule
+```

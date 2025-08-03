@@ -1,0 +1,35 @@
+[Keyword]: read.sv
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This is a simple pass-through circuit that assigns the input signal directly to the output signal. It is designed to prevent the signal from being removed during synthesis by using the `(* no_ungroup *)` attribute, which ensures that the module is not optimized away or altered during synthesis.
+
+[Input Signal Description]:
+d_i: A parameterized input signal of type T, which is a logic vector of width specified by the parameter `Width`. The default width is 1.
+
+[Output Signal Description]:
+d_o: A parameterized output signal of type T, which is a logic vector of the same width as the input signal `d_i`. It directly reflects the value of `d_i`.
+
+
+[Design Detail]:
+// Copyright 2022 EPFL
+// Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
+// SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+
+// Author: Davide Schiavone, EPFL, OpenHW Group
+// Date: 07.11.2022
+// Description: Dummy circuit to assign a signal, prevent signal being removed after non-ungroupped synthesis compilation
+
+(* no_ungroup *)
+module read #(
+    parameter int unsigned Width = 1,
+    parameter type T = logic [Width-1:0]
+) (
+    input  T d_i,
+    output T d_o
+);
+
+  assign d_o = d_i;
+
+endmodule

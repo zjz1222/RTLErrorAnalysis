@@ -1,0 +1,30 @@
+[Keyword]: dual_edge_detector_simpler
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+The design is a dual-edge detector circuit. It detects changes in the input signal `level` on both the rising and falling edges of the clock signal `clk`. The output `edg` indicates when a change in the `level` input has occurred.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize the edge detection process.
+- `rst_n`: Active-low reset signal. When asserted (low), it resets the internal state of the circuit.
+- `level`: Input signal whose edges (transitions) are to be detected.
+
+[Output Signal Description]:
+- `edg`: Output signal that indicates a detected edge (transition) in the `level` input. It is high when a change in the `level` input is detected.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module dual_edge_detector_simpler(
+	input clk,rst_n,
+	input level,
+	output edg
+    );
+	 reg level_reg=0;
+	 always @(posedge clk,negedge rst_n)
+	 if(!rst_n) level_reg<=0;
+	 else level_reg<=level;
+	 assign edg=level^level_reg;
+endmodule

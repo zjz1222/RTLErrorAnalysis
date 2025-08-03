@@ -1,0 +1,40 @@
+[Keyword]: Mux_8_to_1
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:  
+This design implements an 8-to-1 multiplexer. It selects one of the eight input signals (in0 to in7) based on a 3-bit selection signal (S) and outputs the selected input through Mux_Out.
+
+[Input Signal Description]:  
+- S[2:0]: A 3-bit selection signal that determines which one of the eight inputs (in0 to in7) is routed to the output.  
+- in0, in1, in2, in3, in4, in5, in6, in7: These are the eight input signals to the multiplexer. Each input is a single bit.
+
+[Output Signal Description]:  
+- Mux_Out: The output signal of the multiplexer, which is the selected input based on the value of the selection signal S.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module Mux_8_to_1(Mux_Out , S , in0 , in1 , in2 , in3 , in4 , in5 , in6 , in7);
+
+output reg Mux_Out;
+input [2:0] S;
+input in0 , in1 , in2 , in3 , in4 , in5 , in6 , in7;
+
+always@(*)
+begin
+	case(S)
+		
+		3'b000 : Mux_Out = in0;
+		3'b001 : Mux_Out = in1;
+		3'b010 : Mux_Out = in2;
+		3'b011 : Mux_Out = in3;
+		3'b100 : Mux_Out = in4;
+		3'b101 : Mux_Out = in5;
+		3'b110 : Mux_Out = in6;
+		3'b111 : Mux_Out = in7;
+	endcase
+end
+
+endmodule

@@ -1,0 +1,34 @@
+[Keyword]: Alwaysblock2
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a simple XOR operation between two input signals, `a` and `b`, and provides the result through three different output mechanisms: a continuous assignment, a combinational always block, and a sequential always block triggered by a clock edge.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to trigger the sequential logic.
+- `a`: First input signal for the XOR operation.
+- `b`: Second input signal for the XOR operation.
+
+[Output Signal Description]:
+- `out_assign`: Output of the XOR operation using a continuous assignment.
+- `out_always_comb`: Output of the XOR operation using a combinational always block.
+- `out_always_ff`: Output of the XOR operation using a sequential always block, updated on the rising edge of the clock.
+
+[Design Detail]: 
+```verilog
+// synthesis verilog_input_version verilog_2001
+module top_module(
+    input clk,
+    input a,
+    input b,
+    output wire out_assign,
+    output reg out_always_comb,
+    output reg out_always_ff   );
+
+    assign out_assign = a ^ b;
+    always @(*) out_always_comb = a ^ b;
+    always @(posedge clk) out_always_ff <= a ^ b;
+    
+endmodule
+```

@@ -1,0 +1,79 @@
+[Keyword]: Fsm serialdata
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) to receive a serial data stream and output an 8-bit byte once 8 bits have been successfully received. The FSM handles different states for reading data, checking for completion, and error handling.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize the state transitions and data latching.
+- `in`: Serial input signal from which the 8-bit data is received.
+- `reset`: Synchronous reset signal to initialize the FSM to its starting state.
+
+[Output Signal Description]:
+- `outbyte[7:0]`: 8-bit output that holds the received byte once 8 bits have been successfully read.
+- `done`: Signal indicating that a complete byte has been successfully received and is available on `outbyte`.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input in,
+    input reset,    // Synchronous reset
+    output [7:0] outbyte,
+    output done
+); //
+
+    // Use FSM from Fsmserial
+    reg [3:0] i;
+    parameter rc = 0, rd = 1, dn = 2, err = 3;
+    reg [2:0] state, nextstate;
+    reg [7:0] date;
+
+    always @(*) begin
+        case (state)
+            rd: nextstate <= in ? rd : rc;
+            rc: begin
+                if ((i == 8) & in) begin
+                    nextstate <= dn;
+                end
+                else if ((i == 8) & (~in)) begin
+                    nextstate <= err;
+                end
+                else begin
+                    nextstate <= rc;
+                    date[i] <= in;
+                end
+            end
+            dn: begin
+                nextstate <= in ? rd : rc;
+                outbyte <= date;
+            end
+            err: nextstate <= in ? rd : err;
+        endcase
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            state <= rd;
+            i <= 0;
+        end
+        else begin
+            if ((state == rc) && (i != 8)) begin
+                i <= i + 1;
+            end
+            else if ((state == dn)) begin
+                i <= 0;
+            end
+            else if (state == err) begin
+                i <= 0;
+            end
+            state <= nextstate;
+        end
+    end
+
+    // New: Datapath to latch input bits.
+    assign done = (state == dn);
+
+endmodule
+```

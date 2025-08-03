@@ -1,0 +1,86 @@
+[Keyword]: Lemmings2
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) to control the movement of a character (Lemming) that can walk left or right and react to falling off the ground. The FSM has four states: walking left, walking right, falling while facing left, and falling while facing right. The character changes direction upon bumping into an obstacle and transitions to a falling state when not on the ground.
+
+[Input Signal Description]:
+- `clk`: Clock signal to synchronize state transitions.
+- `areset`: Asynchronous reset signal that initializes the state to walking left.
+- `bumpleft`: Signal indicating the character has bumped into an obstacle while walking left.
+- `bumpright`: Signal indicating the character has bumped into an obstacle while walking right.
+- `ground`: Signal indicating whether the character is on the ground.
+
+[Output Signal Description]:
+- `walkleft`: Signal indicating the character is currently walking left.
+- `walkright`: Signal indicating the character is currently walking right.
+- `aaah`: Signal indicating the character is falling (in either the left or right direction).
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input areset,    // Freshly brainwashed Lemmings walk left.
+    input bumpleft,
+    input bumpright,
+    input ground,
+    output walkleft,
+    output walkright,
+    output aaah ); 
+
+    parameter LEFT = 0, RIGHT = 1, LEFTaah = 2, RIGHTaah = 3;
+    reg [2:0] state, nextstate;
+
+    always @(posedge clk or posedge areset) begin
+        if (areset) begin
+            state <= LEFT;
+        end
+        else begin
+            state <= nextstate;
+        end
+    end
+
+    always @(*) begin
+        case (state)
+            LEFT: begin
+                if (ground) begin
+                    nextstate <= bumpleft ? RIGHT : LEFT;
+                end
+                else begin
+                    nextstate <= LEFTaah;
+                end
+            end
+            RIGHT: begin
+                if (ground) begin
+                    nextstate <= bumpright ? LEFT : RIGHT;
+                end
+                else begin
+                    nextstate <= RIGHTaah;
+                end
+            end
+            LEFTaah: begin
+                if (ground) begin
+                    nextstate <= LEFT;
+                end
+                else begin
+                    nextstate <= LEFTaah;
+                end
+            end
+            RIGHTaah: begin
+                if (ground) begin
+                    nextstate <= RIGHT;
+                end
+                else begin
+                    nextstate <= RIGHTaah;
+                end
+            end
+        endcase
+    end
+
+    assign walkleft = (state == LEFT);
+    assign walkright = (state == RIGHT);
+    assign aaah = ((state == LEFTaah) || (state == RIGHTaah));
+
+endmodule
+```

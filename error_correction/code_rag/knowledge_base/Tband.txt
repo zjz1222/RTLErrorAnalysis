@@ -1,0 +1,25 @@
+[Keyword]: Tband
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+The design is a simple testbench for a 2-input AND gate. It applies different 2-bit input combinations to the AND gate and observes the output.
+
+[Input Signal Description]:
+in[1:0]: A 2-bit input signal that changes over time to test the AND gate with different input combinations.
+
+[Output Signal Description]:
+out: The output of the AND gate, which will be the logical AND of the two input bits.
+
+[Design Detail]: 
+module topmodule();
+    reg [1:0] in;
+    reg out;
+    initial begin
+        in = 2'b0;
+        #10 in = 2'b01;
+        #10 in = 2'b10;
+        #10 in = 2'b11;
+    end
+    andgate gate1(in, out);
+endmodule

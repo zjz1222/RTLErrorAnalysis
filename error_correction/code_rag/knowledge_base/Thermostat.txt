@@ -1,0 +1,34 @@
+[Keyword]: Thermostat
+
+[Design Category]: Control Circuits
+
+[Design Function Description]:
+This circuit is a simple climate control system that manages a heater, air conditioner, and fan based on temperature conditions and mode settings. It decides whether to turn on the heater or air conditioner based on the current mode and temperature inputs, and controls the fan accordingly.
+
+[Input Signal Description]:
+- toocold: A signal indicating if the temperature is too cold.
+- toohot: A signal indicating if the temperature is too hot.
+- mode: A signal indicating the current mode of operation (e.g., heating or cooling mode).
+- fanon: A signal indicating if the fan should be forced on regardless of other conditions.
+
+[Output Signal Description]:
+- heater: A signal to activate the heater when the system is in heating mode and the temperature is too cold.
+- aircon: A signal to activate the air conditioner when the system is in cooling mode and the temperature is too hot.
+- fan: A signal to activate the fan when either the heater or air conditioner is on, or if the fan is forced on.
+
+[Design Detail]: 
+module topmodule (
+    input toocold,
+    input toohot,
+    input mode,
+    input fanon,
+    output heater,
+    output aircon,
+    output fan
+); 
+
+    assign heater = mode & toocold;
+    assign aircon = (~mode) & toohot;
+    assign fan = (heater | aircon) | fanon;
+    
+endmodule

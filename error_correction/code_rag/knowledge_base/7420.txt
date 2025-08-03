@@ -1,0 +1,26 @@
+[Keyword]: 7420
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements two 4-input NAND gates. Each NAND gate takes four input signals and produces an output that is the logical NAND of the inputs.
+
+[Input Signal Description]:
+- p1a, p1b, p1c, p1d: These are the four input signals for the first NAND gate.
+- p2a, p2b, p2c, p2d: These are the four input signals for the second NAND gate.
+
+[Output Signal Description]:
+- p1y: This is the output of the first NAND gate, which is the negation of the logical AND of inputs p1a, p1b, p1c, and p1d.
+- p2y: This is the output of the second NAND gate, which is the negation of the logical AND of inputs p2a, p2b, p2c, and p2d.
+
+[Design Detail]: 
+module topmodule ( 
+    input p1a, p1b, p1c, p1d,
+    output p1y,
+    input p2a, p2b, p2c, p2d,
+    output p2y );
+
+    assign p1y = ~(p1a & p1b & p1c & p1d);
+    assign p2y = ~(p2a & p2b & p2c & p2d);
+
+endmodule

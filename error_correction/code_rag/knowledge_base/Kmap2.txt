@@ -1,0 +1,23 @@
+[Keyword]: Kmap2
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This circuit implements a specific combinational logic function using a combination of AND, OR, and NOT gates. The function is defined by the given logical expression, which combines the inputs a, b, c, and d to produce the output.
+
+[Input Signal Description]:
+a, b, c, d: These are the 1-bit input signals to the circuit. Each input can be either 0 or 1, and they are used in various combinations to determine the output based on the specified logic expression.
+
+[Output Signal Description]:
+out: This is the 1-bit output signal of the circuit. The output is determined by evaluating the logical expression provided, which combines the input signals using AND, OR, and NOT operations.
+
+[Design Detail]: 
+module topmodule(
+    input a,
+    input b,
+    input c,
+    input d,
+    output out
+); 
+    assign out = (~a&~b&~c) | (~a&~c&~d) | (a&~b&~c) | (b&c&d) | (a&c&d) | (~a&b&c) | (~a&c&~d);
+endmodule

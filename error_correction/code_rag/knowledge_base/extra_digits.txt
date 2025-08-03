@@ -1,0 +1,10 @@
+[Keyword]: Extra digits in sized binary constant
+
+[Suggestion]: Ensure binary constants have exactly the specified number of digits
+
+[Example]:
+// Instead of:
+9'b00000000011  // 11 digits for 9-bit
+
+// Use exactly 9 digits:
+9'b000000001

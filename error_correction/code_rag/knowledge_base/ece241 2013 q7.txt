@@ -1,0 +1,35 @@
+[Keyword]: ece241 2013 q7
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a JK flip-flop, a type of sequential logic circuit that changes its output state based on the inputs J and K and the clock signal. The JK flip-flop is a versatile memory element used in various digital systems.
+
+[Input Signal Description]:
+- clk: Clock signal that triggers the state change on its rising edge.
+- j: J input, used to control the set/reset behavior of the flip-flop.
+- k: K input, used to control the toggle/reset behavior of the flip-flop.
+
+[Output Signal Description]:
+- Q: The output of the JK flip-flop, which holds the current state of the flip-flop.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input j,
+    input k,
+    output reg Q
+); 
+    
+    always @(posedge clk) begin
+        if (!j) begin
+            Q <= k ? j : Q;
+        end
+        else begin
+            Q <= k ? ~Q : j;
+        end
+    end
+
+endmodule
+```

@@ -1,0 +1,64 @@
+[Keyword]: Examsece241 2014 q7a
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a 4-bit counter with additional control logic. The counter counts from 1 to 12 and resets back to 1. It includes enable and reset functionality, and it interfaces with another module, `count4`, using control signals `cenable`, `cload`, and `cd`.
+
+[Input Signal Description]:
+- `clk`: Clock signal for synchronizing the counter operations.
+- `reset`: Resets the counter to 1 when asserted.
+- `enable`: Enables the counter to increment when asserted.
+
+[Output Signal Description]:
+- `Q[3:0]`: 4-bit output representing the current count value.
+- `cenable`: Control signal passed to the `count4` module, mirroring the `enable` input.
+- `cload`: Control signal indicating when to load a new value into the `count4` module.
+- `cd[3:0]`: Data signal for the `count4` module, set to 1 when `cload` is asserted.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input reset,
+    input enable,
+    output [3:0] Q,
+    output cenable,
+    output cload,
+    output [3:0] cd
+); //
+    wire [3:0] Qtmp;
+    assign cenable = enable;
+    assign cd = cload ? 1 : 0;
+    always @(posedge clk) begin
+        if(reset) begin
+            Q <= 1;
+            Qtmp <= 1;
+        end
+        else begin
+            if(enable) begin
+                if(Q == 12) begin
+                    Q <= 1;
+                    Qtmp <= 1;
+                end
+                else begin
+                    Q <= Q + 1;
+                    Qtmp <= Qtmp + 1;
+                end
+            end
+        end
+    end
+    
+    always @(*) begin
+        if(reset || (Q == 12 && cenable)) begin
+            cload <= 1;
+        end
+        else begin
+            cload <= 0;
+        end
+    end
+
+    count4 thecounter (clk, cenable, cload, cd, Qtmp);
+
+endmodule
+```

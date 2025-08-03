@@ -1,0 +1,36 @@
+[Keyword]: Edgedetect2
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+The circuit detects any edge (rising or falling) on each bit of an 8-bit input signal. It outputs a corresponding 8-bit signal where each bit indicates whether an edge has occurred on the respective input bit since the last clock cycle.
+
+[Input Signal Description]:
+- clk: Clock signal used to synchronize the edge detection process.
+- in[7:0]: 8-bit input signal whose edges (transitions from 0 to 1 or 1 to 0) are to be detected.
+
+[Output Signal Description]:
+- anyedge[7:0]: 8-bit output signal where each bit is set to 1 if an edge is detected on the corresponding input bit, otherwise it is set to 0.
+
+[Design Detail]: 
+module topmodule (
+    input clk,
+    input [7:0] in,
+    output [7:0] anyedge
+);
+    
+    integer i;
+    reg [7:0] intmp;
+    always @(posedge clk) begin
+        for(i = 0; i < 8; i = i + 1) begin
+            if(intmp[i] != in[i]) begin
+                anyedge[i] = 1;
+            end
+            else begin
+                anyedge[i] = 0;
+            end
+            intmp[i] = in[i];
+        end
+    end
+
+endmodule

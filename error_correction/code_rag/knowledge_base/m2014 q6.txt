@@ -1,0 +1,54 @@
+[Keyword]: m2014 q6
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) with six states (a, b, c, d, e, f). The FSM transitions between states based on the input signal `w` and outputs a signal `z` that is high when the FSM is in states `e` or `f`.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize state transitions.
+- `reset`: Synchronous reset signal that initializes the FSM to state `a` when high.
+- `w`: Input signal that influences state transitions within the FSM.
+
+[Output Signal Description]:
+- `z`: Output signal that is high when the FSM is in state `e` or `f`, and low otherwise.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input reset,     // synchronous reset
+    input w,
+    output z);
+
+    parameter a=3'b000, b=3'b001, c=3'b010, d=3'b011, e=3'b100, f=3'b101;
+    reg [2:0] state, nextstate;
+    
+    always@(*) begin
+        case({state, w})
+            {a, 1'b0}:  nextstate = b;
+            {a, 1'b1}:  nextstate = a;
+            {b, 1'b0}:  nextstate = c;
+            {b, 1'b1}:  nextstate = d;
+            {c, 1'b0}:  nextstate = e;
+            {c, 1'b1}:  nextstate = d;
+            {d, 1'b0}:  nextstate = f;
+            {d, 1'b1}:  nextstate = a;
+            {e, 1'b0}:  nextstate = e;
+            {e, 1'b1}:  nextstate = d;
+            {f, 1'b0}:  nextstate = c;
+            {f, 1'b1}:  nextstate = d;
+        endcase
+    end
+    
+    always@(posedge clk) begin
+        if(reset)
+            state <= a;
+        else
+            state <= nextstate;
+    end
+    
+    assign z = (state == e || state == f);
+    
+endmodule
+```

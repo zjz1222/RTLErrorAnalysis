@@ -1,0 +1,31 @@
+[Keyword]: Lfsr5
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a 5-bit Linear Feedback Shift Register (LFSR) with a specific feedback polynomial. The LFSR generates a pseudo-random sequence of bits. The register is reset to a specific value (5'h1) when the reset signal is active.
+
+[Input Signal Description]:
+clk: Clock signal that triggers the LFSR to shift and update its state on the rising edge.
+reset: Active-high synchronous reset signal that initializes the LFSR to the value 5'h1.
+
+[Output Signal Description]:
+q[4:0]: 5-bit output representing the current state of the LFSR, which changes with each clock cycle based on the feedback logic.
+
+[Design Detail]: 
+module topmodule(
+    input clk,
+    input reset,    // Active-high synchronous reset to 5'h1
+    output [4:0] q
+); 
+
+    always @(posedge clk) begin
+        if(reset) begin
+            q <= 5'h1;
+        end
+        else begin
+            q <= {0 ^ q[0], q[4], q[3] ^ q[0], q[2], q[1]};
+        end
+    end
+    
+endmodule

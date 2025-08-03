@@ -1,0 +1,44 @@
+[Keyword]: moore_complement
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a Moore-type finite state machine (FSM) that performs serial two's complement conversion through a one-input (x) one-output (z) interface. 
+The FSM operates with three distinct states (A, B, and C) and transitions between these states are controlled by the input signal x.
+An active-high asynchronous reset signal (areset) forces the FSM to initialize in state A regardless of current state or input conditions. The output z is asserted high exclusively when the machine resides in state C, maintaining the characteristic output stability of Moore machine implementations.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize state transitions.
+- `areset`: Active high asynchronous reset signal that initializes the state to A.
+- `x`: Input signal that affects state transitions.
+
+[Output Signal Description]:
+- `z`: Output signal that is high (1) when the FSM is in state C, and low (0) otherwise.
+
+[Design Detail]:
+```verilog
+module TopModule (
+  input clk,
+  input areset,
+  input x,
+  output z
+);
+
+  parameter A=0,B=1,C=2;
+  reg [1:0] state;
+  always @(posedge clk, posedge areset) begin
+    if (areset)
+      state <= A;
+    else begin
+      case (state)
+        A: state <= x ? C : A;
+        B: state <= x ? B : C;
+        C: state <= x ? B : C;
+      endcase
+    end
+  end
+
+  assign z = (state == C);
+
+endmodule
+```

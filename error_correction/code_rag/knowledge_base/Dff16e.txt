@@ -1,0 +1,38 @@
+[Keyword]: Dff16e
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a byte-enable register with asynchronous reset. It stores a 16-bit input data `d` into the output `q` based on the byte-enable signal `byteena`. The register updates its stored value on the rising edge of the clock `clk`, and it can reset to zero asynchronously when `resetn` is low.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize the data storage.
+- `resetn`: Active-low asynchronous reset signal. When low, it resets the output `q` to zero.
+- `byteena[1:0]`: 2-bit byte-enable signal. `byteena[1]` controls the update of the upper byte (bits 15 to 8) of `q`, and `byteena[0]` controls the update of the lower byte (bits 7 to 0) of `q`.
+- `d[15:0]`: 16-bit input data to be stored in the register.
+
+[Output Signal Description]:
+- `q[15:0]`: 16-bit output that holds the stored data. It updates based on the `byteena` signal and the input `d` on the rising edge of `clk`, or resets to zero when `resetn` is low.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input resetn,
+    input [1:0] byteena,
+    input [15:0] d,
+    output reg [15:0] q
+);
+    
+    always @(posedge clk) begin
+        if(!resetn) begin
+            q <= 0;
+        end
+        else begin
+            q[15:8] <= byteena[1] ? d[15:8] : q[15:8];
+            q[7:0] <= byteena[0] ? d[7:0] : q[7:0];
+        end
+    end
+
+endmodule
+```

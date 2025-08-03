@@ -1,0 +1,34 @@
+[Keyword]: D_FlipFlop
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a D Flip-Flop with an asynchronous clear. It captures the value of the input D on the rising edge of the clock signal (clk) and outputs it on O. If the clear signal is asserted (active low), the output O is reset to 0 regardless of the clock.
+
+[Input Signal Description]:
+- D: Data input signal. The value of D is captured on the rising edge of the clock if the clear signal is not active.
+- clk: Clock input signal. The rising edge of this signal triggers the capturing of the D input.
+- clear: Asynchronous clear input signal. When this signal is low, it resets the output O to 0 immediately, regardless of the clock.
+
+[Output Signal Description]:
+- O: Output signal. It holds the value of the D input captured on the rising edge of the clock, unless the clear signal is active, in which case it is reset to 0.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module D_FlipFlop(O , D , clk , clear);
+
+input D , clk , clear;
+output reg O;
+
+always@(posedge clk , negedge clear)
+begin
+	
+	if(clear == 1'b0)
+		O <= 1'b0;
+	else
+		O <= D;
+	
+end
+endmodule

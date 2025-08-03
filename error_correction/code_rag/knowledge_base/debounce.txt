@@ -1,0 +1,84 @@
+[Keyword]: debounce
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+The design is a debounce circuit implemented using a finite state machine (FSM). It is used to filter out the noise or glitches from a mechanical switch or button press, ensuring that only a stable signal is passed through after a specified debounce delay.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize the state transitions and counter operations.
+- `rst_n`: Active-low reset signal to initialize the state and counter registers.
+- `signal`: Input signal from a mechanical switch or button that needs to be debounced.
+
+[Output Signal Description]:
+- `level`: Indicates the stable state of the debounced signal. It reflects the debounced version of the input `signal`.
+- `ready`: Indicates when the debounce circuit is ready to accept a new input signal.
+- `r_edg`: Indicates a rising edge detection on the input `signal`, used to trigger the start of the debounce process.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module debounce(
+	input clk,rst_n,
+	input signal,
+	output reg level,
+	output reg ready,r_edg	
+    );
+	 //FSM state declarations
+	 localparam[1:0] idle=2'd0,
+							one=2'd1,
+							waiting=2'd2,
+							zero=2'd3;
+	 localparam N=5_000_000; //N/50MHz=100ms debounce delay
+	 reg[1:0] state_reg,state_nxt;
+	 reg[22:0] counter_reg,counter_nxt; //log_2(N) -> 20bits
+	 //FSM register operations
+	 always @(posedge clk,negedge rst_n) begin
+		if(!rst_n) begin
+			state_reg<=0;
+			counter_reg<=0;
+		end
+		else begin
+			state_reg<=state_nxt;
+			counter_reg<=counter_nxt;
+		end
+	 end
+	 //FSM next-state logic
+	 always @* begin
+		state_nxt=state_reg;
+		counter_nxt=counter_reg;
+		ready=0;
+		r_edg=0;
+		level=0;
+		case(state_reg) 
+			   idle: begin
+							ready=1;
+							if(signal) begin
+								counter_nxt=0;
+								r_edg=1;
+								state_nxt=one;
+							end
+						end
+		       one: begin
+							level=1;
+							if(counter_reg==N-1) state_nxt=waiting;
+							else counter_nxt=counter_reg+1;
+						end
+			waiting: begin
+							level=1;
+							if(!signal) begin
+								counter_nxt=0;
+								state_nxt=zero;
+							end
+						end
+			   zero: begin
+							if(counter_reg==N-1) state_nxt=idle;
+							else counter_nxt=counter_reg+1;
+						end
+			default: state_nxt=idle;
+		endcase
+	 end
+	 
+
+endmodule

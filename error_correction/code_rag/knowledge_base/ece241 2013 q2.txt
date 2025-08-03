@@ -1,0 +1,28 @@
+[Keyword]: ece241 2013 q2
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a logic circuit that calculates the Sum of Products (SOP) and Product of Sums (POS) for a given set of inputs. The circuit outputs the same result for both SOP and POS forms, indicating that the logic expressions are equivalent.
+
+[Input Signal Description]:
+a, b, c, d: These are the 1-bit input signals to the circuit. They represent the variables used in the logic expressions for SOP and POS.
+
+[Output Signal Description]:
+outsop: This is the output signal representing the result of the Sum of Products expression.
+outpos: This is the output signal representing the result of the Product of Sums expression. In this design, it is equivalent to outsop.
+
+[Design Detail]: 
+module topmodule (
+    input a,
+    input b,
+    input c,
+    input d,
+    output outsop,
+    output outpos
+); 
+    
+    assign outsop = (~a & ~b & c) | (b & c & d) | (a & c & d);
+    assign outpos = outsop;
+
+endmodule

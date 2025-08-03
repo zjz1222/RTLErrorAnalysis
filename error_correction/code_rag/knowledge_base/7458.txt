@@ -1,0 +1,34 @@
+[Keyword]: 7458
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements two separate logic functions. The first function is a 3-input AND gate followed by an OR gate, which combines two sets of three inputs each. The second function is a 2-input AND gate followed by an OR gate, which combines two sets of two inputs each.
+
+[Input Signal Description]:
+- p1a, p1b, p1c, p1d, p1e, p1f: These are the input signals for the first logic function. They are grouped into two sets of three inputs each (p1a, p1b, p1c) and (p1d, p1e, p1f).
+- p2a, p2b, p2c, p2d: These are the input signals for the second logic function. They are grouped into two sets of two inputs each (p2a, p2b) and (p2c, p2d).
+
+[Output Signal Description]:
+- p1y: This is the output signal for the first logic function. It is the result of OR-ing the outputs of two 3-input AND gates.
+- p2y: This is the output signal for the second logic function. It is the result of OR-ing the outputs of two 2-input AND gates.
+
+[Design Detail]: 
+```verilog
+module top_module ( 
+    input p1a, p1b, p1c, p1d, p1e, p1f,
+    output p1y,
+    input p2a, p2b, p2c, p2d,
+    output p2y );
+
+    wire abc1, def1, ab2, cd2;
+    assign abc1 = p1c & p1b & p1a;
+    assign def1 = p1f & p1e & p1d;
+    assign p1y = abc1 | def1;
+    
+    assign ab2 = p2a & p2b;
+    assign cd2 = p2c & p2d;
+    assign p2y = ab2 | cd2;
+    
+endmodule
+```

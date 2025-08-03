@@ -1,0 +1,22 @@
+[Keyword]: Wire4
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This circuit is a simple wire assignment module that directly connects input signals to output signals. It essentially passes the input values to the outputs without any modification or logic operation.
+
+[Input Signal Description]:
+a, b, c: These are the input signals to the module. Each is a single-bit input.
+
+[Output Signal Description]:
+w, x, y, z: These are the output signals of the module. Each output is directly assigned the value of one of the input signals. Specifically, w is assigned the value of a, x and y are both assigned the value of b, and z is assigned the value of c.
+
+[Design Detail]: 
+module top_module( 
+    input a, b, c,
+    output w, x, y, z );
+    assign w = a;
+    assign x = b;
+    assign y = b;
+    assign z = c;
+endmodule

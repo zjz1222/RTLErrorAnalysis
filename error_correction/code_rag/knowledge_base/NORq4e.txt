@@ -1,0 +1,22 @@
+[Keyword]: NORq4e
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a NOR gate, which is a digital logic gate that outputs true or high only when both inputs are false or low.
+
+[Input Signal Description]:
+in1: A single-bit input signal.
+in2: A single-bit input signal.
+
+[Output Signal Description]:
+out: A single-bit output signal that is the NOR of the inputs in1 and in2. It outputs high when both in1 and in2 are low.
+
+[Design Detail]: 
+module topmodule (
+    input in1,
+    input in2,
+    output out
+);
+    assign out = ~(in1 | in2);
+endmodule

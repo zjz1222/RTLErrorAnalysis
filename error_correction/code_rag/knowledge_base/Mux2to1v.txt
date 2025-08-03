@@ -1,0 +1,26 @@
+[Keyword]: Mux2to1v
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a 100-bit wide 2-to-1 multiplexer. It selects between two 100-bit input vectors, `a` and `b`, based on the value of the selection signal `sel`. If `sel` is 1, the output `out` will be equal to `b`; if `sel` is 0, the output `out` will be equal to `a`.
+
+[Input Signal Description]:
+- `a[99:0]`: A 100-bit input vector.
+- `b[99:0]`: Another 100-bit input vector.
+- `sel`: A 1-bit selection signal that determines which input vector is passed to the output.
+
+[Output Signal Description]:
+- `out[99:0]`: A 100-bit output vector that is equal to either `a` or `b`, depending on the value of the selection signal `sel`.
+
+[Design Detail]: 
+```verilog
+module topmodule( 
+    input [99:0] a, b,
+    input sel,
+    output [99:0] out );
+    
+    assign out = sel ? b : a;
+
+endmodule
+```

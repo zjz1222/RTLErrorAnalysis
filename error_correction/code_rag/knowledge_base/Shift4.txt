@@ -1,0 +1,43 @@
+[Keyword]: Shift4
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a 4-bit shift register with asynchronous reset, load, and enable functionalities. The register can load a 4-bit input value, shift its contents right by one bit, or reset to zero based on control signals.
+
+[Input Signal Description]:
+- clk: Clock signal for synchronizing the operations.
+- areset: Asynchronous active-high reset signal that sets the output to zero when high.
+- load: Control signal to load the input data into the register when high.
+- ena: Enable signal that allows the register to shift its contents right by one bit when high.
+- data[3:0]: 4-bit input data to be loaded into the register when the load signal is high.
+
+[Output Signal Description]:
+- q[3:0]: 4-bit output register that holds the current state of the shift register. It can be loaded with new data, shifted right, or reset to zero based on the control signals.
+
+[Design Detail]: 
+module topmodule(
+    input clk,
+    input areset,  // async active-high reset to zero
+    input load,
+    input ena,
+    input [3:0] data,
+    output reg [3:0] q); 
+
+    always @(posedge clk or posedge areset) begin
+        if(areset) begin
+            q <= 0;
+        end
+        else begin
+            if(load == 1) begin
+                q <= data;  
+            end
+            else begin
+                if(ena == 1) begin
+                    q = q >> 1;
+                end
+            end
+        end
+    end
+    
+endmodule

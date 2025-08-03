@@ -1,0 +1,27 @@
+[Keyword]: m2014 q6c
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This circuit is a combinational logic circuit that computes two specific output signals, Y2 and Y4, based on the input signals. It uses logical operations to determine the values of these outputs.
+
+[Input Signal Description]:
+- y[6:1]: A 6-bit input vector where each bit can be used in logical operations to determine the output.
+- w: A single-bit input signal that influences the logic for determining the outputs Y2 and Y4.
+
+[Output Signal Description]:
+- Y2: The output is the result of a logical AND operation between the first bit of the input vector y and the negation of the input w.
+- Y4: The output is the result of a logical OR operation among several AND operations involving bits 2, 3, 5, and 6 of the input vector y, all ANDed with the input w.
+
+[Design Detail]: 
+module topmodule (
+    input [6:1] y,
+    input w,
+    output Y2,
+    output Y4
+);
+
+    assign Y2 = y[1] & (~w);
+    assign Y4 = (y[2] & w) | (y[3] & w) | (y[5] & w) | (y[6] & w);
+
+endmodule

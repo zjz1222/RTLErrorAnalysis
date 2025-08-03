@@ -1,0 +1,25 @@
+[Keyword]: 7Vector1
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design is a simple signal splitter that takes a 16-bit input and divides it into two separate 8-bit outputs. The higher 8 bits of the input are assigned to one output, and the lower 8 bits are assigned to another output.
+
+[Input Signal Description]:
+in[15:0]: A 16-bit input signal that is to be split into two 8-bit segments.
+
+[Output Signal Description]:
+out_hi[7:0]: An 8-bit output signal representing the higher 8 bits of the input.
+out_lo[7:0]: An 8-bit output signal representing the lower 8 bits of the input.
+
+[Design Detail]: 
+`default_nettype none     // Disable implicit nets. Reduces some types of bugs.
+module top_module( 
+    input wire [15:0] in,
+    output wire [7:0] out_hi,
+    output wire [7:0] out_lo );
+
+    assign out_hi = in[15:8];
+    assign out_lo = in[7:0];
+    
+endmodule

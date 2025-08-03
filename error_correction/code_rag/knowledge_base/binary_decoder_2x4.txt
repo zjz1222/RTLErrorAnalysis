@@ -1,0 +1,30 @@
+[Keyword]: binary_decoder_2x4
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:  
+The circuit is a 2-to-4 binary decoder. It takes a 2-bit binary input and decodes it into a 4-bit output, where only one of the output bits is set to '1' based on the input combination, provided the enable signal is active.
+
+[Input Signal Description]:  
+- `en`: Enable signal. The decoder is active and produces an output only when this signal is high.
+- `a[1:0]`: 2-bit input signal that determines which one of the 4 output lines will be activated.
+
+[Output Signal Description]:  
+- `bcode[3:0]`: 4-bit output signal where only one bit is set to '1' based on the input `a` when the enable signal `en` is high. Each bit corresponds to one of the possible combinations of the input `a`.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module binary_decoder_2x4(
+	input en,
+	input[1:0] a,
+	output[3:0] bcode
+    );
+	 assign bcode[0]= en && !a[1] && !a[0],
+				bcode[1]= en && !a[1] && a[0],
+				bcode[2]= en && a[1] && !a[0],
+				bcode[3]= en && a[1] && a[0]; 
+
+
+endmodule

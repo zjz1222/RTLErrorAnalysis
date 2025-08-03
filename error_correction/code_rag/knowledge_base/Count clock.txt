@@ -1,0 +1,108 @@
+[Keyword]: Count clock
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a 12-hour clock with AM/PM indication. It counts hours, minutes, and seconds, and toggles the AM/PM indicator when the hour transitions from 11 to 12. The clock can be reset to 12:00:00 AM and can be enabled or disabled using the `ena` signal.
+
+[Input Signal Description]:
+- `clk`: Clock signal that drives the sequential logic.
+- `reset`: Resets the clock to 12:00:00 AM when asserted.
+- `ena`: Enable signal that allows the clock to increment when high.
+
+[Output Signal Description]:
+- `pm`: Indicates whether the time is in the PM period (1 for PM, 0 for AM).
+- `hh`: 8-bit output representing the current hour in BCD format.
+- `mm`: 8-bit output representing the current minute in BCD format.
+- `ss`: 8-bit output representing the current second in BCD format.
+
+[Design Detail]: 
+```verilog
+module topmodule 
+    (
+        input clk,
+        input reset,
+        input ena,
+        output pm,
+        output [7:0] hh,
+        output [7:0] mm,
+        output [7:0] ss
+    );
+
+    reg p;  //0: am, 1: pm
+    reg [7:0] h;
+    reg [7:0] m;
+    reg [7:0] s;
+
+    always @ (posedge clk)
+        begin
+            if(reset)
+                begin
+                    p <= 0;
+                    h <= 8'h12;
+                    m <= 8'h00;
+                    s <= 8'h00;
+                end
+            else
+                begin
+                    if(ena)
+                        begin
+                            if(s < 8'h59)
+                                begin
+                                    if(s[3:0] < 4'h9)
+                                        begin
+                                            s[3:0] <= s[3:0] + 1'h1; 
+                                        end
+                                    else
+                                        begin
+                                            s[3:0] <= 0;
+                                            s[7:4] <= s[7:4] + 1'h1;
+                                        end 
+                                end
+                            else
+                                begin
+                                    s <= 0;
+                                    if(m < 8'h59)
+                                        begin
+                                            if(m[3:0] < 4'h9)
+                                                begin
+                                                    m[3:0] <= m[3:0] + 1'h1; 
+                                                end 
+                                            else
+                                                begin
+                                                    m[3:0] <= 0;
+                                                    m[7:4] <= m[7:4] + 1'h1;
+                                                end
+                                        end
+                                    else
+                                        begin
+                                            m <= 1'h0;
+                                            if(h == 8'h11)
+                                                p = !p;
+                                            if(h < 8'h12)
+                                                begin
+                                                    if(h[3:0] < 4'h9)
+                                                        h[3:0] <= h[3:0] + 1'h1;
+                                                    else
+                                                        begin
+                                                            h[3:0] <= 4'h0;
+                                                            h[7:4] <= h[7:4] + 1'h1;
+                                                        end
+                                                end
+                                            else
+                                                begin
+                                                   h <= 1'h1; 
+                                                end
+                                        end
+                                end
+                        end
+                end
+        end
+
+    assign pm = p;
+    assign hh = h;
+    assign mm = m;
+    assign ss = s;
+
+endmodule
+```

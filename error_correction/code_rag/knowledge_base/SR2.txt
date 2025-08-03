@@ -1,0 +1,36 @@
+[Keyword]: SR2
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a simple 8-bit register with synchronous reset and load enable functionality. It captures the input data `d` on the rising edge of the clock when the load enable `l` is low. If the reset `rst` is high, the register is reset to zero.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize the data capture.
+- `rst`: Synchronous reset signal. When high, it resets the output `q2` to zero on the rising edge of the clock.
+- `l`: Load enable signal. When low, it allows the data `d` to be loaded into the register `q2`.
+- `d[7:0]`: 8-bit data input that is captured into the register when `l` is low.
+
+[Output Signal Description]:
+- `q2[7:0]`: 8-bit output register that holds the captured data. It retains its value when `l` is high and resets to zero when `rst` is high.
+
+
+[Design Detail]:
+//SR
+
+module s3(clk,rst,d,l,q2);
+
+input clk,rst,l;
+input [7:0] d;
+output reg [7:0] q2;
+
+always @(posedge clk)
+begin
+if(rst)
+q2=0;
+else if(l)
+q2=q2;
+else
+q2=d;
+end
+endmodule

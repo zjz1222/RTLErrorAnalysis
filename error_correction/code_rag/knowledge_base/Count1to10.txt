@@ -1,0 +1,35 @@
+[Keyword]: Count1to10
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a 4-bit decade counter that counts from 1 to 10. Upon reaching 10, it resets back to 1. The counter is synchronous with the clock signal and can be reset asynchronously to 1.
+
+[Input Signal Description]:
+clk: Clock signal that triggers the counter to increment on each rising edge.
+reset: Asynchronous reset signal that sets the counter to 1 when asserted.
+
+[Output Signal Description]:
+q[3:0]: 4-bit output representing the current count value of the counter, ranging from 1 to 10.
+
+[Design Detail]: 
+module topmodule (
+    input clk,
+    input reset,
+    output [3:0] q);
+
+    always @(posedge clk) begin
+        if(reset) begin
+            q <= 1;
+        end
+        else begin
+            if(q == 10) begin
+                q <= 1;
+            end
+            else begin
+                q <= q + 1;
+            end
+        end
+    end
+    
+endmodule

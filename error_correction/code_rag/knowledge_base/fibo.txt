@@ -1,0 +1,76 @@
+[Keyword]: fibo
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a sequential logic circuit that calculates the Fibonacci sequence up to the 31st Fibonacci number. It uses a finite state machine (FSM) to control the calculation process, transitioning through states to compute the Fibonacci numbers based on the input index.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize the operations of the circuit.
+- `rst_n`: Active-low reset signal to initialize the circuit.
+- `start`: Signal to initiate the Fibonacci calculation process.
+- `i[4:0]`: 5-bit input signal representing the index of the Fibonacci number to be calculated, with a maximum value of 31.
+
+[Output Signal Description]:
+- `fibo[20:0]`: 21-bit output signal representing the calculated Fibonacci number corresponding to the input index `i`.
+- `done_tick`: A register output signal that indicates the completion of the Fibonacci calculation process.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module fibo(
+	input clk,rst_n,
+	input start,
+	input[4:0] i, //limit is until the 31st fibonacci
+	output[20:0] fibo,
+	output reg done_tick
+    );
+	//FSM state declarations
+	 localparam[1:0] idle=2'd0,
+							op=2'd1,
+							done=2'd2;
+	 reg[1:0] state_reg;
+	 reg[20:0] i1,i0;
+	 reg[4:0] n;
+	 
+	 //FSM register operation
+	 always @(posedge clk,negedge rst_n) begin
+		if(!rst_n) begin
+			i1<=0;
+			i0<=0;
+			n<=0;
+			done_tick=0;
+			state_reg<=idle;
+		end
+		else begin
+			done_tick=0;                     
+			case(state_reg) 
+				idle: if(start) begin
+							i1<=1;
+							i0<=0;
+							n<=i;
+							state_reg<=op;
+						end
+				 op: begin
+						if(n==0) begin
+							i1<=0;
+							state_reg<=done;
+						end
+						else if(n==1) state_reg<=done;
+						else begin
+							i1<=i0+i1;
+							i0<=i1;
+							n<=n-1;
+						end				 
+					  end
+			  done: begin
+						done_tick=1;
+						state_reg<=idle;
+					  end
+		  default: state_reg<=idle;		 
+			endcase
+		end
+	 end
+	 assign fibo=i1;
+endmodule

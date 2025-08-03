@@ -1,0 +1,19 @@
+[Keyword]: Reduction
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design calculates the parity of an 8-bit input vector. The parity is determined by performing a bitwise XOR operation across all bits of the input. The output is 1 if the number of 1s in the input is odd, and 0 if the number of 1s is even.
+
+[Input Signal Description]:
+in[7:0]: An 8-bit input signal whose parity is to be calculated.
+
+[Output Signal Description]:
+parity: A single-bit output signal that represents the parity of the input. It is 1 if the number of 1s in the input is odd, and 0 if even.
+
+[Design Detail]: 
+module top_module (
+    input [7:0] in,
+    output parity); 
+    assign parity = ^ in[7:0];
+endmodule

@@ -1,0 +1,34 @@
+[Keyword]: Gates
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+The circuit processes a 4-bit input vector to produce three different output vectors. It calculates bitwise operations between adjacent bits of the input vector to generate outputs that represent logical AND, OR, and inequality (XOR-like) operations.
+
+[Input Signal Description]:
+in[3:0]: A 4-bit input signal that serves as the source for generating the output signals through bitwise operations.
+
+[Output Signal Description]:
+outboth[2:0]: A 3-bit output signal where each bit is the result of a bitwise AND operation between adjacent bits of the input.
+outany[3:1]: A 3-bit output signal where each bit is the result of a bitwise OR operation between adjacent bits of the input.
+outdifferent[3:0]: A 4-bit output signal where each bit indicates whether adjacent bits of the input are different (similar to XOR operation).
+
+[Design Detail]: 
+module topmodule( 
+    input [3:0] in,
+    output [2:0] outboth,
+    output [3:1] outany,
+    output [3:0] outdifferent );
+    
+    integer i;
+    
+    always @(*) begin
+        for(i = 0; i < 3; i ++) begin
+            outboth[i] = in[i] & in[i+1];
+            outany[i+1] = in[i] | in[i+1];
+            outdifferent[i] = (in[i] != in[i+1]) ? 1:0;
+        end
+        outdifferent[3] = (in[0] != in[3]) ? 1:0;
+    end
+
+endmodule

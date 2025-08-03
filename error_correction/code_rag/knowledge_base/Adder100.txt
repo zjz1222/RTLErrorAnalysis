@@ -1,0 +1,36 @@
+[Keyword]: Adder100
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+This design implements a 100-bit ripple carry adder. It takes two 100-bit binary numbers and an input carry, and produces a 100-bit sum and an output carry. The adder performs bitwise addition of the two input numbers, taking into account the carry from the previous bit addition.
+
+[Input Signal Description]:
+- a[99:0]: A 100-bit input signal representing the first operand for the addition.
+- b[99:0]: A 100-bit input signal representing the second operand for the addition.
+- cin: A single-bit input signal representing the initial carry-in for the least significant bit addition.
+
+[Output Signal Description]:
+- sum[99:0]: A 100-bit output signal representing the result of the addition of inputs a and b, including the carry propagation.
+- cout: A single-bit output signal representing the final carry-out from the most significant bit addition.
+
+[Design Detail]: 
+module topmodule( 
+    input [99:0] a, b,
+    input cin,
+    output cout,
+    output [99:0] sum );
+    
+    wire [99:0] couttmp;
+    assign sum[0] = a[0] ^ b[0] ^ cin;
+    assign couttmp[0] = a[0] & b[0] | a[0] & cin | b[0] & cin;
+    integer i;
+    always @(*) begin
+        for(i = 1; i < 100; i = i + 1) begin
+            sum[i] = a[i] ^ b[i] ^ couttmp[i-1];
+            couttmp[i] = a[i] & b[i] | a[i] & couttmp[i-1] | b[i] & couttmp[i-1];
+        end
+        cout = couttmp[99];
+    end
+
+endmodule

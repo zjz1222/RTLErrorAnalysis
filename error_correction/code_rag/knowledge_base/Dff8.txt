@@ -1,0 +1,26 @@
+[Keyword]: Dff8
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is an 8-bit register that captures and holds the input data on the rising edge of the clock signal. It is a basic storage element used in sequential circuits.
+
+[Input Signal Description]:
+clk: Clock signal used to synchronize data capture.
+d[7:0]: 8-bit data input signal that is captured and stored on the rising edge of the clock.
+
+[Output Signal Description]:
+q[7:0]: 8-bit output signal that holds the value of the input data after being captured on the rising edge of the clock.
+
+[Design Detail]: 
+module topmodule (
+    input clk,
+    input [7:0] d,
+    output reg [7:0] q
+);
+    
+    always @(posedge clk) begin
+        q <= d;
+    end
+
+endmodule

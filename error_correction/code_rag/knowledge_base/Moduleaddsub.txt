@@ -1,0 +1,42 @@
+[Keyword]: Moduleaddsub
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+This design implements a 32-bit adder/subtractor. It can perform addition or subtraction based on the control signal `sub`. When `sub` is high, the circuit performs subtraction by inverting the second operand `b` and adding 1 (using the carry-in). When `sub` is low, it performs addition.
+
+[Input Signal Description]:
+- `a[31:0]`: A 32-bit input operand.
+- `b[31:0]`: A 32-bit input operand that can be inverted for subtraction.
+- `sub`: A control signal that determines whether the operation is addition (0) or subtraction (1).
+
+[Output Signal Description]:
+- `sum[31:0]`: The 32-bit result of the addition or subtraction operation.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input [31:0] a,
+    input [31:0] b,
+    input sub,
+    output [31:0] sum
+);
+
+    wire cout1, cout2;
+    wire [15:0] sum1, sum2;
+    wire [31:0] bxor;
+    
+    always @(*) begin
+        if(sub)
+            bxor = ~b;
+        else
+            bxor = b;
+    end
+    
+    add16 instance1(.a(a[15:0]), .b(bxor[15:0]), .cin(sub), .cout(cout1), .sum(sum1));
+    add16 instance2(.a(a[31:16]), .b(bxor[31:16]), .cin(cout1), .cout(cout2), .sum(sum2));
+    
+    assign sum = {sum2, sum1};
+    
+endmodule
+```

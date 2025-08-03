@@ -1,0 +1,36 @@
+[Keyword]: Always casezv
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a priority encoder. It takes an 8-bit input and outputs the position of the first high bit ('1') encountered from the least significant bit (LSB) to the most significant bit (MSB). If no bits are high, it defaults to outputting position 0.
+
+[Input Signal Description]:
+in[7:0]: An 8-bit input signal where each bit can be either 0 or 1. The circuit checks these bits to determine the position of the first '1' from the right.
+
+[Output Signal Description]:
+pos[2:0]: A 3-bit output signal representing the position of the first '1' found in the input signal. If no '1' is found, it defaults to 0.
+
+[Design Detail]: 
+```verilog
+// synthesis verilog_input_version verilog_2001
+module top_module (
+    input [7:0] in,
+    output reg [2:0] pos  );
+
+    always @(*) begin
+        casez(in)
+            8'bzzzzzzz1 : pos = 0;
+            8'bzzzzzz1z : pos = 1;
+            8'bzzzzz1zz : pos = 2;
+            8'bzzzz1zzz : pos = 3;
+            8'bzzz1zzzz : pos = 4;
+            8'bzz1zzzzz : pos = 5;
+            8'bz1zzzzzz : pos = 6;
+            8'b1zzzzzzz : pos = 7;
+            default : pos = 0;
+        endcase
+    end
+    
+endmodule
+```

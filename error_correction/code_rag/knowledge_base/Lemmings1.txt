@@ -1,0 +1,57 @@
+[Keyword]: Lemmings1
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a simple finite state machine (FSM) that controls the direction of movement for an entity, such as a Lemming. The entity can walk either left or right, and its direction can change based on bump signals. The FSM has two states: LEFT and RIGHT. The entity starts walking left upon reset and changes direction when it encounters a bump.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize state transitions.
+- `areset`: Asynchronous reset signal that initializes the state to LEFT, indicating the entity should start walking left.
+- `bumpleft`: Signal indicating a bump encountered while walking left, prompting a change in direction to right.
+- `bumpright`: Signal indicating a bump encountered while walking right, prompting a change in direction to left.
+
+[Output Signal Description]:
+- `walkleft`: Output signal that is high when the entity is in the LEFT state, indicating it is walking left.
+- `walkright`: Output signal that is high when the entity is in the RIGHT state, indicating it is walking right.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input areset,    // Freshly brainwashed Lemmings walk left.
+    input bumpleft,
+    input bumpright,
+    output walkleft,
+    output walkright); //  
+
+    // parameter LEFT=0, RIGHT=1, ...
+    parameter LEFT = 0, RIGHT = 1;
+    reg state, nextstate;
+
+    always @(*) begin
+        // State transition logic
+        case (state)
+            LEFT: nextstate <= bumpleft ? RIGHT : LEFT;
+            RIGHT: nextstate <= bumpright ? LEFT : RIGHT;
+        endcase
+    end
+
+    always @(posedge clk, posedge areset) begin
+        // State flip-flops with asynchronous reset
+        if (areset) begin
+            state <= LEFT;
+        end
+        else begin
+            state <= nextstate;
+        end
+    end
+
+    // Output logic
+    // assign walkleft = (state == ...);
+    // assign walkright = (state == ...);
+    assign walkleft = (state == LEFT);
+    assign walkright = (state == RIGHT);
+
+endmodule
+```

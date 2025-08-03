@@ -1,0 +1,50 @@
+[Keyword]: Fsm1
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a simple finite state machine (FSM) with two states, A and B. The FSM transitions between these states based on the input signal 'in'. The state transitions are controlled by a clock signal and an asynchronous reset signal. The output 'out' is determined by the current state of the FSM.
+
+[Input Signal Description]:
+- clk: Clock signal that synchronizes the state transitions.
+- areset: Asynchronous reset signal that forces the FSM to state B when asserted.
+- in: Input signal that influences the state transitions between A and B.
+
+[Output Signal Description]:
+- out: Output signal that is high when the FSM is in state B and low when in state A.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input areset,    // Asynchronous reset to state B
+    input in,
+    output out
+);  
+
+    parameter A = 0, B = 1; 
+    reg state, nextstate;
+
+    always @(*) begin    // This is a combinational always block
+        // State transition logic
+        case (state)
+            A: nextstate <= in ? A : B;
+            B: nextstate <= in ? B : A;
+        endcase
+    end
+
+    always @(posedge clk, posedge areset) begin    // This is a sequential always block
+        // State flip-flops with asynchronous reset
+        if (areset) begin
+            state <= B;
+        end
+        else begin
+            state <= nextstate;
+        end
+    end
+
+    // Output logic
+    assign out = (state == B);
+
+endmodule
+```

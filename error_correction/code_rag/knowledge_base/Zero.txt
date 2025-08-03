@@ -1,0 +1,19 @@
+[Keyword]: Zero
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This circuit is designed to output a constant logic low signal. It is a simple combinational logic circuit that assigns a constant value of 0 to the output.
+
+[Input Signal Description]:
+There are no input signals for this module. It is designed to always output a constant value.
+
+[Output Signal Description]:
+zero: A single-bit output signal that is always set to logic low (0).
+
+[Design Detail]: 
+module top_module(
+    output zero
+);
+    assign zero = 1'b0;
+endmodule

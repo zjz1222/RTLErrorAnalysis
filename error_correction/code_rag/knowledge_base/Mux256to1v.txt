@@ -1,0 +1,23 @@
+[Keyword]: Mux256to1v
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a 256-to-1 multiplexer for 4-bit wide data. The 256 4-bit inputs are packed into a single 1024-bit input vector. The 8-bit selection signal determines which 4-bit segment of the input vector is routed to the output.
+
+[Input Signal Description]:
+in[1023:0]: A 1024-bit input signal containing 256 4-bit wide data segments.
+sel[7:0]: An 8-bit selection signal that determines which 4-bit segment of the input is selected (can represent values from 0 to 255).
+
+[Output Signal Description]:
+out[3:0]: A 4-bit output signal that corresponds to the selected 4-bit segment from the input vector based on the value of the selection signal.
+
+[Design Detail]: 
+module topmodule( 
+    input [1023:0] in,
+    input [7:0] sel,
+    output [3:0] out );
+
+    assign out = in[sel*4+3 -: 4]; // - and : should be put together
+    
+endmodule

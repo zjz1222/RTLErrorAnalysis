@@ -1,0 +1,37 @@
+[Keyword]: Bcdadd100
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+This design implements a 400-digit Binary-Coded Decimal (BCD) adder. It takes two 400-digit BCD numbers and a carry-in as inputs and produces a 400-digit BCD sum and a carry-out. Each BCD digit is represented by 4 bits, and the addition is performed digit by digit using a BCD full adder module.
+
+[Input Signal Description]:
+- a[399:0]: A 400-digit BCD number, where each digit is represented by 4 bits.
+- b[399:0]: Another 400-digit BCD number, where each digit is represented by 4 bits.
+- cin: A single-bit carry-in input for the least significant digit addition.
+
+[Output Signal Description]:
+- cout: A single-bit carry-out from the most significant digit addition.
+- sum[399:0]: The 400-digit BCD sum of the inputs a and b, with each digit represented by 4 bits.
+
+[Design Detail]: 
+```verilog
+module top_module( 
+    input [399:0] a, b,
+    input cin,
+    output cout,
+    output [399:0] sum );
+    
+    wire [399:0] cout_tmp;
+    bcd_fadd fadd(.a(a[3:0]), .b(b[3:0]), .cin(cin), .cout(cout_tmp[0]),.sum(sum[3:0]));
+    assign cout = cout_tmp[396];
+    
+    generate
+        genvar i;
+        for(i = 4; i < 400; i=i+4) begin : adder
+            bcd_fadd fadd(.a(a[i+3:i]), .b(b[i+3:i]), .cin(cout_tmp[i-4]), .cout(cout_tmp[i]),.sum(sum[i+3:i]));
+        end
+    endgenerate
+
+endmodule
+```

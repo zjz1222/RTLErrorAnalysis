@@ -1,0 +1,32 @@
+[Keyword]: CS450timer
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a countdown counter with a loadable initial value. It counts down from a specified value and outputs a terminal count signal when the counter reaches zero.
+
+[Input Signal Description]:
+- clk: Clock signal that triggers the counter to decrement on each positive edge.
+- load: Control signal to load the counter with a new value from the data input.
+- data[9:0]: 10-bit input signal that provides the initial value to load into the counter when the load signal is active.
+
+[Output Signal Description]:
+- tc: Terminal count output signal that goes high when the counter reaches zero, indicating the countdown is complete.
+
+[Design Detail]: 
+module topmodule(
+    input clk, 
+    input load, 
+    input [9:0] data, 
+    output tc
+);
+    reg [9:0] counter;
+    
+    always@(posedge clk) begin
+        if (load==1'b1) counter <= data;
+        else counter <= (counter==10'b0)?counter:counter-1;
+    end
+    
+    assign tc = (counter == 10'b0)?1'b1:1'b0;
+
+endmodule

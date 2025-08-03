@@ -1,0 +1,39 @@
+[Keyword]: Fsm onehot
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) with 10 states. The FSM transitions between states based on the input signal 'in' and the current state. It also produces two output signals, 'out1' and 'out2', based on the current state.
+
+[Input Signal Description]:
+- in: A single-bit input signal that influences state transitions.
+- state[9:0]: A 10-bit input vector representing the current state of the FSM.
+
+[Output Signal Description]:
+- nextstate[9:0]: A 10-bit output vector representing the next state of the FSM based on the current state and input signal.
+- out1: A single-bit output signal that is high when the FSM is in state 8 or state 9.
+- out2: A single-bit output signal that is high when the FSM is in state 7 or state 9.
+
+[Design Detail]: 
+module topmodule(
+    input in,
+    input [9:0] state,
+    output [9:0] nextstate,
+    output out1,
+    output out2);
+
+    assign nextstate[0] = ~in & (state[0] | state[1] | state[2] | state[3] | state[4] | state[7] | state[8] | state[9]);
+    assign nextstate[1] = in & (state[0] | state[8] | state[9]);
+    assign nextstate[2] = in & state[1];
+    assign nextstate[3] = in & state[2];
+    assign nextstate[4] = in & state[3];
+    assign nextstate[5] = in & state[4];
+    assign nextstate[6] = in & state[5];
+    assign nextstate[7] = in & (state[6] | state[7]);
+    assign nextstate[8] = ~in & state[5];
+    assign nextstate[9] = ~in & state[6];
+ 
+    assign out1 = state[8] | state[9];
+    assign out2 = state[7] | state[9];
+
+endmodule

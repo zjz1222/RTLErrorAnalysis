@@ -1,0 +1,32 @@
+[Keyword]: m2014 q4b
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a D flip-flop with an asynchronous reset. It captures the value of the input 'd' on the rising edge of the clock 'clk' and outputs it on 'q'. If the asynchronous reset 'ar' is asserted, the output 'q' is immediately reset to 0, regardless of the clock.
+
+[Input Signal Description]:
+- clk: Clock signal used to synchronize the data capture.
+- d: Data input signal that is captured on the rising edge of the clock.
+- ar: Asynchronous reset signal that, when high, resets the output 'q' to 0 immediately.
+
+[Output Signal Description]:
+- q: The output signal that holds the value of the input 'd' after being captured on the rising edge of the clock, or 0 if the asynchronous reset is active.
+
+[Design Detail]: 
+module topmodule (
+    input clk,
+    input d, 
+    input ar,   // asynchronous reset
+    output q);
+
+    always @(posedge clk or posedge ar) begin
+        if(ar) begin
+            q <= 0;
+        end
+        else begin
+            q <= d;
+        end
+    end
+    
+endmodule

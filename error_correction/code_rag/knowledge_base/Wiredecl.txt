@@ -1,0 +1,37 @@
+[Keyword]: Wiredecl
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a simple combinational logic circuit that performs a series of logical operations on its inputs. It computes the logical AND of two pairs of inputs and then performs a logical OR on the results. Additionally, it provides both the direct output and its logical negation.
+
+[Input Signal Description]:
+- a: A single-bit input signal.
+- b: A single-bit input signal.
+- c: A single-bit input signal.
+- d: A single-bit input signal.
+
+[Output Signal Description]:
+- out: The output signal representing the logical OR of the AND results of the input pairs (a & b) and (c & d).
+- outn: The output signal representing the logical negation of the 'out' signal.
+
+[Design Detail]: 
+```verilog
+`defaultnettype none
+module topmodule(
+    input a,
+    input b,
+    input c,
+    input d,
+    output out,
+    output outn   ); 
+    
+    wire wire1, wire2, wire3;
+    assign wire1 = a & b;
+    assign wire2 = c & d;
+    assign wire3 = wire1 | wire2;
+    assign out = wire3;
+    assign outn = ~wire3;
+    
+endmodule
+```

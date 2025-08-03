@@ -1,0 +1,25 @@
+[Keyword]: Vector100r
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+The circuit is designed to reverse the order of a 100-bit input vector. It takes a 100-bit input and outputs a 100-bit vector where the bits are in reverse order compared to the input.
+
+[Input Signal Description]:
+in[99:0]: A 100-bit input signal that represents the data to be reversed.
+
+[Output Signal Description]:
+out[99:0]: A 100-bit output signal that contains the reversed order of the input bits.
+
+[Design Detail]: 
+module top_module( 
+    input [99:0] in,
+    output [99:0] out
+);
+
+    always @(*) begin
+        for(integer i = 0; i < 100; i++)
+            out[i] = in[99 - i];
+    end
+    
+endmodule

@@ -1,0 +1,25 @@
+[Keyword]: Fadd
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]: 
+This design implements a 1-bit full adder. A full adder is a digital circuit that computes the sum of three binary bits, including a carry-in bit, and produces a sum and a carry-out bit.
+
+[Input Signal Description]: 
+- a: A 1-bit input representing one of the addends.
+- b: A 1-bit input representing the other addend.
+- cin: A 1-bit input representing the carry-in from a previous less significant bit addition.
+
+[Output Signal Description]: 
+- sum: A 1-bit output representing the sum of the inputs a, b, and cin.
+- cout: A 1-bit output representing the carry-out, which is used as the carry-in for the next more significant bit addition.
+
+[Design Detail]: 
+module topmodule( 
+    input a, b, cin,
+    output cout, sum );
+    
+    assign sum = a ^ b ^ cin;
+    assign cout = a & b | a & cin | b & cin;
+
+endmodule

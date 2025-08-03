@@ -1,0 +1,27 @@
+[Keyword]: 2012 q2b
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This circuit is a combinational logic circuit that processes a 6-bit input vector and a single-bit control signal to produce two specific outputs based on logical operations.
+
+[Input Signal Description]:
+y[5:0]: A 6-bit input vector that provides the data for logical operations.
+w: A single-bit control signal that influences the logic applied to the input vector.
+
+[Output Signal Description]:
+Y1: The output is the result of a logical AND operation between the least significant bit of the input vector (y[0]) and the control signal (w).
+Y3: The output is the result of a logical OR operation applied to several AND operations between specific bits of the input vector (y[1], y[2], y[4], y[5]) and the negation of the control signal (~w).
+
+[Design Detail]: 
+module topmodule (
+    input [5:0] y,
+    input w,
+    output Y1,
+    output Y3
+);
+
+    assign Y1 = y[0]&w;
+    assign Y3 = y[1]&(~w) | y[2]&(~w) | y[4]&(~w) | y[5]&(~w);
+    
+endmodule

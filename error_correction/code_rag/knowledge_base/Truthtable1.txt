@@ -1,0 +1,36 @@
+[Keyword]: Truthtable1
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a combinational logic circuit that evaluates a 3-bit input and produces a single output. The output is determined based on whether the 3-bit input represents a prime number (2, 3, 5, 7) or not (0, 1, 4, 6).
+
+[Input Signal Description]:
+- x3, x2, x1: These are the three input signals that form a 3-bit binary number. The combination of these inputs is used to determine the output.
+
+[Output Signal Description]:
+- f: This is the output signal that is set to 1 if the 3-bit input represents a prime number (2, 3, 5, 7) and set to 0 otherwise.
+
+[Design Detail]: 
+```verilog
+module topmodule( 
+    input x3,
+    input x2,
+    input x1,  // three inputs
+    output reg f   // one output
+);
+    wire [2:0] tmp;
+    assign tmp = {x3,x2,x1};
+    always @(*) begin
+        case(tmp)
+            2,3,5,7: begin
+                f = 1;
+            end
+            0,1,4,6: begin
+                f = 0;
+            end
+        endcase
+    end
+
+endmodule
+```

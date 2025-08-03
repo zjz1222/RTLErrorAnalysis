@@ -1,0 +1,22 @@
+[Keyword]: Vector2
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This circuit rearranges the bytes of a 32-bit input signal. It takes the input and swaps the positions of its bytes, effectively reversing the order of the bytes.
+
+[Input Signal Description]:
+in[31:0]: A 32-bit input signal composed of four 8-bit bytes.
+
+[Output Signal Description]:
+out[31:0]: A 32-bit output signal where the bytes of the input signal are reversed in order.
+
+[Design Detail]: 
+module top_module( 
+    input [31:0] in,
+    output [31:0] out );
+
+    // Rearrange the bytes of the input signal
+    assign out = {in[7:0], in[15:8], in[23:16], in[31:24]};
+
+endmodule

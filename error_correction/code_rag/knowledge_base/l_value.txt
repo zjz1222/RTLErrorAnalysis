@@ -1,0 +1,12 @@
+[Keyword]: Not a valid l-value
+
+[Suggestion]: When next_state is defined as wire, use assign statements instead of always block
+
+[Example]:
+// Instead of:
+wire next_state;
+always @(*) next_state = ...  // Error
+
+// Use:
+wire next_state;
+assign next_state = ...  // Correct

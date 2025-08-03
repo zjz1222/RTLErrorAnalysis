@@ -1,0 +1,18 @@
+[Keyword]: Stepone
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This circuit is a simple constant output generator that always outputs a logic high ('1').
+
+[Input Signal Description]:
+There are no input signals for this design as it is a constant output generator.
+
+[Output Signal Description]:
+one: A single-bit output that is always set to logic high ('1').
+
+[Design Detail]: 
+module topmodule( output one );
+    // Insert your code here
+    assign one = 1'b1;
+endmodule

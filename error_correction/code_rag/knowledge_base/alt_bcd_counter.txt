@@ -1,0 +1,54 @@
+[Keyword]: alt_bcd_counter
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:  
+This design is a Binary Coded Decimal (BCD) counter that counts in decimal digits. It uses three 4-bit registers to represent the decimal digits, allowing it to count from 000 to 999. The counter increments every time the `go` signal is high and the internal counter reaches 4,999,999, effectively creating a time delay based on the clock frequency.
+
+[Input Signal Description]:  
+- `clk`: Clock signal that drives the counter.
+- `rst_n`: Active-low reset signal that initializes the counter to zero.
+- `go`: Control signal that enables the counting process when high.
+
+[Output Signal Description]:  
+- `s1`: 4-bit register representing the hundreds digit of the BCD counter.
+- `s0`: 4-bit register representing the tens digit of the BCD counter.
+- `ms0`: 4-bit register representing the units digit of the BCD counter.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module alt_bcd_counter(
+	input clk,rst_n,
+	input go,
+	output reg[3:0] s1,s0,ms0
+    );
+	 reg[22:0] counter_reg=0;
+	 always @(posedge clk,negedge rst_n) begin
+		if(!rst_n) begin
+			s1<=0;
+			s0<=0;
+			ms0<=0;
+			counter_reg<=0;
+		end
+		else if(go) begin //nested-if for describing the BCD-counter
+			if(counter_reg!=4_999_999)	counter_reg<=counter_reg+1;
+			else begin
+				counter_reg<=0;
+				if(ms0!=9) ms0<=ms0+1;
+				else begin
+					ms0<=0;
+					if(s0!=9) s0<=s0+1;
+					else begin
+						s0<=0;
+						if(s1!=9) s1<=s1+1;
+						else s1<=0;
+					end
+				end
+			end
+		end
+	 end
+
+
+endmodule

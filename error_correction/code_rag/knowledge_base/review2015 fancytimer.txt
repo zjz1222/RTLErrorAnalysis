@@ -1,0 +1,90 @@
+[Keyword]: review2015 fancytimer
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) that processes input data to load a 4-bit count value and then counts down from that value. The FSM transitions through various states based on the input data and acknowledges signals, and it includes a synchronous reset. The circuit outputs whether it is currently counting and when it has completed the counting process.
+
+[Input Signal Description]:
+- `clk`: Clock signal for synchronizing state transitions and operations.
+- `reset`: Synchronous reset signal to initialize the state and counters.
+- `data`: Input data signal used to load the count value and determine state transitions.
+- `ack`: Acknowledgment signal used to transition from the waiting state back to the idle state.
+
+[Output Signal Description]:
+- `count[3:0]`: 4-bit output representing the current count value being processed.
+- `counting`: Output signal indicating whether the FSM is in the counting state.
+- `done`: Output signal indicating that the FSM has completed the counting process and is in the waiting state.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input reset,      // Synchronous reset
+    input data,
+    output [3:0] count,
+    output counting,
+    output done,
+    input ack );
+
+    parameter idle = 0, s1 = 1, s2 = 2, s3 = 3, b0 = 4, b1 = 5;
+    parameter b2 = 6, b3 = 7, counts = 8, waiting = 9;
+    reg [3:0] state, nextstate;
+    reg [9:0] counter;
+
+    always @(*) begin
+        case (state)
+            idle:   nextstate = data ? s1 : idle;
+            s1:     nextstate = data ? s2 : idle;
+            s2:     nextstate = data ? s2 : s3;
+            s3:     nextstate = data ? b0 : idle;
+            b0:     nextstate = b1;
+            b1:     nextstate = b2;
+            b2:     nextstate = b3;
+            b3:     nextstate = counts;
+            counts: nextstate = (count == 0 && counter == 999) ? waiting : counts;
+            waiting:nextstate = ack ? idle : waiting;
+        endcase
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            count <= 0;
+            counter <= 0;
+        end
+        else begin
+            case (state)
+                b0: count[3] <= data;
+                b1: count[2] <= data;
+                b2: count[1] <= data;
+                b3: count[0] <= data;
+                counts: begin
+                    if (count >= 0) begin
+                        if (counter < 999) begin
+                            counter <= counter + 1;
+                        end
+                        else begin
+                            count <= count - 1;
+                            counter <= 0;
+                        end
+                    end
+                end
+                default: counter <= 0;
+            endcase
+        end
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            state <= idle;
+        end
+        else begin
+            state <= nextstate;
+        end
+    end
+
+    assign counting = (state == counts);
+    assign done = (state == waiting);
+
+endmodule
+```

@@ -1,0 +1,43 @@
+[Keyword]: prod1
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements an 8-bit shift register. The shift register shifts its contents to the right on the negative edge of the clock signal. The input 'd' is shifted into the most significant bit of the register. The register can be reset to zero using the 'rst' signal, and it can hold its current value if the 'l' signal is active.
+
+[Input Signal Description]:
+- clk: Clock signal used to synchronize the shifting operation.
+- rst: Reset signal, when active, resets the shift register to zero.
+- l: Load signal, when active, holds the current value of the shift register.
+- d: Data input signal, which is shifted into the most significant bit of the register.
+
+[Output Signal Description]:
+- q3: An 8-bit output register that holds the current state of the shift register.
+
+
+[Design Detail]:
+//Prod1
+module s4(clk,rst,d,l,q3);
+
+input clk,rst,l,d;
+output reg [7:0] q3;
+
+always @(negedge clk)
+begin
+if(rst)
+q3<=7'd0;
+else if(l)
+q3<=q3;
+else
+begin
+q3[0]<=q3[1];
+q3[1]<=q3[2];
+q3[2]<=q3[3];
+q3[3]<=q3[4];
+q3[4]<=q3[5];
+q3[5]<=q3[6];
+q3[6]<=q3[7];
+q3[7]<=d;
+end
+end
+endmodule

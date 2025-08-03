@@ -1,0 +1,23 @@
+[Keyword]: Hadd
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+This design implements a 1-bit full adder. It takes two 1-bit binary numbers as inputs and produces a sum and a carry-out as outputs.
+
+[Input Signal Description]:
+a: 1-bit input signal representing the first binary number.
+b: 1-bit input signal representing the second binary number.
+
+[Output Signal Description]:
+cout: 1-bit output signal representing the carry-out of the addition.
+sum: 1-bit output signal representing the sum of the two input bits.
+
+[Design Detail]: 
+module topmodule( 
+    input a, b,
+    output cout, sum );
+    
+    assign {cout, sum} = a + b;
+
+endmodule

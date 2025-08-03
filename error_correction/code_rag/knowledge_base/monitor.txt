@@ -1,0 +1,66 @@
+[Keyword]: monitor
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+The design is a monitoring module that tracks and displays the state of a counter. It captures and logs the state of various control signals and the counter value at each clock cycle. The module checks if the counter's result matches the expected value and logs an error message if there is a discrepancy.
+
+[Input Signal Description]:
+- `clk`: Clock signal for synchronizing the operations.
+- `rst_n`: Active-low reset signal to initialize the system.
+- `syn_clr`: Synchronous clear signal to reset the counter to zero.
+- `load`: Signal to load a new value into the counter.
+- `en`: Enable signal to allow counting.
+- `up`: Signal to determine the counting direction (up or down).
+- `d[N-1:0]`: Data input for loading a new value into the counter.
+- `q[N-1:0]`: Current value of the counter.
+- `max_tick`: Signal indicating the counter has reached its maximum value.
+- `min_tick`: Signal indicating the counter has reached its minimum value.
+
+[Output Signal Description]:
+There are no explicit output signals in this module. Instead, the module uses `$strobe` to log the state of the system, including the control signals, counter value, and any error messages.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module monitor
+	#(parameter N=3)
+	(
+	input clk,rst_n,
+	input syn_clr,load,en,up,
+	input[N-1:0] d,
+	input[N-1:0] q,
+	input max_tick,min_tick
+    );
+	 reg syn_clr_reg,load_reg,en_reg,up_reg,rst_reg;
+	 reg[N-1:0] d_reg,result,q_reg;
+	 reg[39:0] msg;
+	 initial begin
+		$display("time sync_clr/load/en/up q result msg");
+	 end
+	 always @(posedge clk) begin
+		syn_clr_reg<=syn_clr;
+		load_reg<=load;
+		en_reg<=en;
+		up_reg<=up;
+		d_reg<=d;
+		q_reg<=q;
+		rst_reg<=1;
+		msg=(result===q)?" ":"ERROR";
+		$strobe("%0d %b%b%b%b %0d %0d %s",$time,syn_clr,load,en,up,q,result,msg);
+	 end
+	 
+	 always @* begin
+		if(!rst_n) rst_reg=0;
+		if(!rst_reg) result=0;
+		else begin
+			if(syn_clr_reg) result=0;
+			else if(load_reg) result=d;
+			else if(en_reg && up_reg) result=q_reg+1;
+			else if(en_reg && !up_reg) result=q_reg-1;
+			else result=q_reg;
+		end
+	 end
+	 
+endmodule

@@ -1,0 +1,70 @@
+[Keyword]: Bugs case
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design is a decoder that converts an 8-bit input code into a 4-bit output. It checks if the input code matches one of the predefined hexadecimal values and outputs a corresponding 4-bit number. If the input code matches, the valid signal is set to 1; otherwise, it is set to 0.
+
+[Input Signal Description]:
+code[7:0]: An 8-bit input signal representing a code that needs to be decoded into a 4-bit output.
+
+[Output Signal Description]:
+out[3:0]: A 4-bit output signal that represents the decoded value of the input code.
+valid: A signal that indicates whether the input code is valid (1) or not (0).
+
+[Design Detail]: 
+module topmodule (
+    input [7:0] code,
+    output reg [3:0] out,
+    output reg valid = 1 
+);
+
+    always @(*)
+        case (code)
+            8'h45: begin
+                out = 0;
+                valid = 1;
+            end
+            8'h16: begin
+                out = 1;
+                valid = 1;
+            end
+            8'h1e: begin
+                out = 2;
+                valid = 1;
+            end
+            8'h26: begin
+                out = 3;
+                valid = 1;
+            end
+            8'h25: begin
+                out = 4;
+                valid = 1;
+            end
+            8'h2e: begin
+                out = 5;
+                valid = 1;
+            end
+            8'h36: begin
+                out = 6;
+                valid = 1;
+            end
+            8'h3d: begin
+                out = 7;
+                valid = 1;
+            end
+            8'h3e: begin
+                out = 8;
+                valid = 1;
+            end
+            8'h46: begin
+                out = 9;
+                valid = 1;
+            end
+            default: begin
+                out = 0;
+                valid = 0;
+            end
+        endcase
+
+endmodule

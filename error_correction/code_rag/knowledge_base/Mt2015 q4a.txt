@@ -1,0 +1,22 @@
+[Keyword]: Mt2015 q4a
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This circuit implements a simple combinational logic function that performs a bitwise XOR operation between two input signals, x and y, and then performs a bitwise AND operation with the result and the input signal x.
+
+[Input Signal Description]:
+x: A single-bit input signal.
+y: A single-bit input signal.
+
+[Output Signal Description]:
+z: A single-bit output signal that results from the XOR operation between x and y, followed by an AND operation with x.
+
+[Design Detail]: 
+module topmodule (
+  input x,
+  input y,
+  output z
+);
+   assign z = (x ^ y) & x;
+endmodule

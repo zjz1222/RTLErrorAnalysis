@@ -1,0 +1,32 @@
+[Keyword]: Examsm2014 q4k
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a 3-bit shift register with synchronous reset functionality. The shift register captures the input signal 'in' on each rising edge of the clock and shifts it through three stages. The output 'out' reflects the value of the third stage of the shift register.
+
+[Input Signal Description]:
+- clk: Clock signal that triggers the shifting operation on its rising edge.
+- resetn: Synchronous reset signal. When low, it resets the shift register to zero on the next clock edge.
+- in: Input signal that is shifted into the register.
+
+[Output Signal Description]:
+- out: Output signal representing the value of the third stage of the shift register.
+
+[Design Detail]: 
+module topmodule (
+    input clk,
+    input resetn,   // synchronous reset
+    input in,
+    output out);
+    
+    reg [2:0] Q;
+    
+    always @(posedge clk) begin
+        Q[0] <= (resetn) ? in : 0;
+        Q[1] <= (resetn) ? Q[0] : 0;
+        Q[2] <= (resetn) ? Q[1] : 0;
+        out <= (resetn) ? Q[2] : 0;
+    end
+
+endmodule

@@ -1,0 +1,32 @@
+[Keyword]: Kmap4
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a combinational logic circuit that outputs a specific logic function based on the inputs a, b, c, and d. The function is a sum of products (SOP) form, which is a common way to express logic functions.
+
+[Input Signal Description]:
+- a: A single-bit input signal.
+- b: A single-bit input signal.
+- c: A single-bit input signal.
+- d: A single-bit input signal.
+
+These inputs are used to evaluate the logic expression and determine the output.
+
+[Output Signal Description]:
+- out: A single-bit output signal that represents the result of the logic function based on the given inputs a, b, c, and d.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input a,
+    input b,
+    input c,
+    input d,
+    output out
+); 
+    
+    assign out = (~a&b&~c&~d) | (a&~b&~c&~d) | (~a&~b&~c&d) | (a&b&~c&d) | (~a&b&c&d) | (a&~b&c&d) | (~a&~b&c&~d) | (a&b&c&~d);
+
+endmodule
+```

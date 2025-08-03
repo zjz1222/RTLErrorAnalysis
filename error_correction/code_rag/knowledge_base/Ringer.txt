@@ -1,0 +1,27 @@
+[Keyword]: Ringer
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This circuit is designed to control a mobile device's alert system, determining whether the device should ring or vibrate based on the input signals. It uses simple logic to decide between activating a ringer or a motor for vibration.
+
+[Input Signal Description]:
+- ring: A signal indicating whether the device should alert the user (1 for alert, 0 for no alert).
+- vibratemode: A signal indicating the mode of alert (1 for vibrate mode, 0 for ring mode).
+
+[Output Signal Description]:
+- ringer: An output signal that activates the ringer to make sound when the device is in ring mode and the ring signal is active.
+- motor: An output signal that activates the motor to vibrate when the device is in vibrate mode and the ring signal is active.
+
+[Design Detail]: 
+module topmodule (
+    input ring,
+    input vibratemode,
+    output ringer,       // Make sound
+    output motor         // Vibrate
+);
+    
+    assign ringer = ring & (~vibratemode);
+    assign motor = ring & vibratemode;
+
+endmodule

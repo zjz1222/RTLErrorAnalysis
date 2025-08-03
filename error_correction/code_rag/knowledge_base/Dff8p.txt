@@ -1,0 +1,33 @@
+[Keyword]: Dff8p
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is an 8-bit negative-edge triggered D flip-flop with an asynchronous reset. When the reset signal is active, the output is set to a predefined value (0x34). Otherwise, on the negative edge of the clock, the output follows the input data.
+
+[Input Signal Description]:
+- clk: Clock signal used to trigger the flip-flop on its negative edge.
+- reset: Asynchronous reset signal. When high, it sets the output to a predefined value (0x34).
+- d[7:0]: 8-bit data input signal that is captured on the negative edge of the clock when reset is not active.
+
+[Output Signal Description]:
+- q[7:0]: 8-bit output signal that holds the value of the input data 'd' on the negative edge of the clock, or the reset value (0x34) when reset is active.
+
+[Design Detail]: 
+module topmodule (
+    input clk,
+    input reset,
+    input [7:0] d,
+    output reg [7:0] q
+);
+    
+    always @(negedge clk) begin
+        if(reset) begin
+            q <= 8'h34;
+        end
+        else begin
+            q <= d;
+        end
+    end
+
+endmodule

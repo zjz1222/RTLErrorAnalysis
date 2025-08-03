@@ -1,0 +1,37 @@
+[Keyword]: Examsece241 2013 q12high
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements an 8-bit shift register with a parallel output. The shift register shifts its contents on the rising edge of the clock when the enable signal is high. The output Z is determined by the value of the 3-bit address formed by inputs A, B, and C, which selects one of the bits from the shift register.
+
+[Input Signal Description]:
+- clk: Clock signal that triggers the shift operation on its rising edge.
+- enable: Control signal that allows the shift operation when high.
+- S: Serial input bit that is shifted into the register.
+- A, B, C: 3-bit address input used to select which bit of the shift register is output to Z.
+
+[Output Signal Description]:
+- Z: Output signal that represents the value of the bit in the shift register at the position specified by the address formed by A, B, and C.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input enable,
+    input S,
+    input A, B, C,
+    output Z ); 
+    
+    reg [7:0] Q = 0;
+    
+    always @(posedge clk) begin
+        if(enable) begin
+            Q <= {Q[6:0], S};
+        end
+    end
+    
+    assign Z = Q[{A, B, C}];
+
+endmodule
+```

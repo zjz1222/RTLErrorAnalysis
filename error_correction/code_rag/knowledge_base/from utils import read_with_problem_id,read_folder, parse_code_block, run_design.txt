@@ -1,0 +1,278 @@
+from utils import read_with_problem_id,read_folder, parse_code_block, run_design
+from prompts import knowledge_base_annotate_system_prompt, knowledge_acquistion_error_debug_system_prompt
+from model import ChatModel
+import json
+import os
+import openai
+from config import *
+import numpy as np
+import faiss
+from CodeRAG.embeddings import generate_embeddings
+from CodeRAG.index import *
+from CodeRAG.search import search
+from colorama import Fore, init
+import re
+
+def design_annotate(design_name: str, design: str):
+    system_prompt = knowledge_base_annotate_system_prompt
+    user_prompt = f"[User Input]:\n{design}\n[Your Output]:\n"
+    
+    llm = ChatModel(model_name = 'gpt-4o', temperature = 0.0)
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt}
+    ]
+    response = llm.generate(messages)
+    design_annotation = f"[Design Name]: {design_name}"
+    design_annotation += f"\n\n{response}"
+
+    return design_annotation
+
+
+#Local Knowledge Base
+def local_knowledge_base_annotate():
+    problem_id = input("«Î ‰»Î¥˝◊¢ ÕµƒŒ Ã‚–Ú∫≈:")
+    problem_name, design_description, design, ref_design, testbench = read_with_problem_id(problem_id)
+    design = ref_design.replace("RefModule", "TopModule")
+    design_name = problem_name[8:]
+    design_annotation = design_annotate(design_name, design)
+
+    with open(f"./Knowledge_Base/Local_Knowledge_Base/{design_name}.txt", "w") as file:
+        file.write(design_annotation)
+
+#Github Repo Process
+def github_repo_annotate():
+    github_repo_path = f"./Github_Repo"
+    github_repo_name = "Verilog_Practice"
+    
+    folder_path = f"{github_repo_path}/{github_repo_name}"
+
+    file_name_list, file_path_list = read_folder(folder_path = folder_path)
+    init(autoreset=True) 
+
+    for index, file_path, in enumerate(file_path_list):
+        
+        if "test" in file_path.lower(): continue
+        if "tb" in file_path.lower(): continue
+        if (".v" not in file_path.lower()) and ('.sv' not in file_path.lower()): continue
+        
+        file_name = os.path.basename(file_path)
+        design_name = file_name.replace(".v", "")
+        with open(file_path, "r", encoding = 'utf-8') as file: design = file.read()
+        
+        print(f"{index} / {len(file_path_list)}: {design_name}")
+        
+        if not os.path.exists(f"./Knowledge_Base/Github_Repo/{github_repo_name}/{design_name}.txt"): continue
+
+        #design_annotation = design_annotate(design_name, design)
+        with open(f"./Knowledge_Base/Github_Repo/{github_repo_name}/{design_name}.txt", "r", encoding = 'utf-8') as file:
+             design_annotation = file.read()   
+        
+        design_description = design_annotation.split("[Design Detail]:")[0]
+        new_design_annotation = design_description + f"\n[Design Detail]:\n{design}"
+
+        with open(f"./Knowledge_Base/Github_Repo/{github_repo_name}/{design_name}.txt", "w") as file:
+             file.write(new_design_annotation)
+
+        print(Fore.RED + f"Write {index}/{len(file_path_list)}: {design_name}")
+              
+def construct_index(FAISS_INDEX_FILE: str, WATCHED_DIR: str):
+    files_processed = 0
+    for root, _, files in os.walk(WATCHED_DIR):
+        print(files)
+        for file in files:
+            file_path = os.path.join(root, file)
+            print(file_path)
+            if not file.endswith('.txt'): continue
+            
+            try:
+                with open(file_path, "r", encoding = 'utf-8') as file: full_content = file.read()
+                embeddings = generate_embeddings(full_content)
+                file_name = os.path.basename(file_path)
+                if embeddings is not None:
+                    add_to_index(embeddings, full_content, file_name, file_path, WATCHED_DIR)
+                else:
+                    print(f"Failed to generate embeddings for {file_path}")
+                files_processed += 1
+            except Exception as e:
+                print(f"Error processing file {file_path}: {e}")
+
+    save_index(FAISS_INDEX_FILE, WATCHED_DIR)
+    print("Index Constructed!")
+
+def split_by_punctuations(text, punct_list):
+    text_list = []
+    text_list.append(text)
+    for punct in punct_list:
+        new_text_list = []
+        for old_text in text_list:
+            new_text_list.extend(old_text.split(punct))
+    
+        text_list = new_text_list
+    return text_list
+
+
+def knowledge_acquistion_error_debug(design_description: str,
+                                     design: str,
+                                     model_name: str = "gpt-3.5-turbo"):
+    
+    corrected_design = design
+    
+    #Github Repo Search
+    GITHUB_REPO_FAISS_INDEX_FILE, GITHUB_REPO_WATCHED_DIR =  f"D:/Github_Repo.faiss", f"{PROJECT_PATH}/Knowledge_Base/Github_Repo",
+    #clear_index(GITHUB_REPO_FAISS_INDEX_FILE, GITHUB_REPO_WATCHED_DIR)
+    #construct_index(GITHUB_REPO_FAISS_INDEX_FILE, GITHUB_REPO_WATCHED_DIR)
+    
+    query = f"[Design Function Description]:\n{design_description}\n"
+    query += f"[Design Detail]:\n{design}\n"
+
+    results_github = search(query, GITHUB_REPO_FAISS_INDEX_FILE, GITHUB_REPO_WATCHED_DIR, k = 1)
+    
+    #Local Knowledge Base Search
+    LOCAL_KB_FAISS_INDEX_FILE, LOCAL_KB_WATCHED_DIR = f"D:/Local_Knowledge_Base.faiss",f"{PROJECT_PATH}/Knowledge_Base/Local_Knowledge_Base"
+                                                      
+    #clear_index(LOCAL_KB_FAISS_INDEX_FILE, LOCAL_KB_WATCHED_DIR)
+    #construct_index(LOCAL_KB_FAISS_INDEX_FILE, LOCAL_KB_WATCHED_DIR)
+    
+    query = f"[Design Function Description]:\n{design_description}\n"
+    query += f"[Design Detail]:\n{design}\n"
+
+    results_local_kb = search(query, LOCAL_KB_FAISS_INDEX_FILE, LOCAL_KB_WATCHED_DIR, k = 1)
+    
+    
+    results = []
+    results.extend(results_github)
+    results.extend(results_local_kb)
+
+    results = sorted(results, key = lambda d:d['distance'])
+
+    user_prompt = f"[Design Description]:\n{design_description}\n"
+    user_prompt += f"[Wrong Design]:\n{design}\n"
+    init(autoreset=True) 
+    print(Fore.RED + "[Example]:")
+    
+    example = ""
+    for result in results[0:1]:
+        content = result['content']
+
+        content_list = split_by_punctuations(content, ["[Design Name]:",
+                                                       "[Design Category]:",
+                                                       "[Design Function Description]:",
+                                                       "[Input Signal Description]:",
+                                                       "[Output Signal Description]:",
+                                                       "[Design Detail]:"])
+        
+        design_description_reference = content_list[3]
+        design_reference = content_list[-1]
+        example += f"Design Description:\n{design_description_reference}\n"
+        example += f"Design:\n{design_reference}\n"
+    
+    print(example)
+    
+    user_prompt += f"[Examples you need to refer to]:\n{example}\n"
+
+    #print(user_prompt)
+    llm = ChatModel(model_name = model_name, temperature = 0.1)
+
+    messages = [
+        {"role": "system", "content": knowledge_acquistion_error_debug_system_prompt},
+        {"role": "user", "content": user_prompt}
+    ]
+    response = llm.generate(messages)
+    corrected_design = parse_code_block(response, "verilog")
+    
+    return corrected_design
+
+
+def test_problem_id(model_name: str = "gpt-3.5-turbo"):
+    problem_id = input("«Î ‰»Î¥˝≤‚ ‘µƒŒ Ã‚–Ú∫≈:")
+    design_name, design_description,  design, ref_design, testbench = read_with_problem_id(problem_id = problem_id,
+                                                                                           model_name = model_name)
+    print(design)
+    corrected_design = knowledge_acquistion_error_debug(design_description, design, model_name = model_name)
+
+    succeed, status, fail_message, score = run_design(design = corrected_design,
+                                                      ref = ref_design,
+                                                      testbench = testbench)
+    print(Fore.RED + "[Corrected Design]:")
+    print(corrected_design)
+    
+    if succeed:
+        print(Fore.GREEN + "Succeed!!!")
+    else:
+        print(Fore.BLUE + "Failed!!!")
+
+    print(Fore.RED + "[Fail Messages]:")
+    print(fail_message)
+
+def test(model_name: str = "gpt-4-turbo"):
+
+    n_sample = 1
+    
+    fail_path = "./Fail_Example_Gpt35"
+    if "gpt-4-turbo" in model_name:
+        fail_path = "./Fail_Example_Gpt4"
+
+    with open(f"{fail_path}/problems.txt","r") as file: problems = file.read()
+    problem_list = problems.split("\n")
+    for problem in problem_list:
+        if not os.path.exists(f"{fail_path}/{problem}"): continue
+        
+        with open(f"{fail_path}/{problem}/design_description.txt", "r") as file:  
+            design_description = file.read()
+        with open(f"{fail_path}/{problem}/design.sv", "r", errors = 'ignore') as file:
+            design = file.read()
+        with open(f"{fail_path}/{problem}/ref_design.sv", "r", errors = 'ignore') as file:
+            ref_design = file.read()
+        with open(f"{fail_path}/{problem}/testbench.sv", "r") as file:
+            testbench = file.read()
+        
+        all_succeed = False
+        with open("./verilog_debug.logs", "a") as file: file.write(f"[{problem} Debug Start]:\n")
+        
+        for i in range(n_sample):
+            corrected_design = knowledge_acquistion_error_debug(design_description, design)
+            succeed, status, fail_message, score = run_design(design = corrected_design,
+                                                              ref = ref_design,
+                                                              testbench = testbench)
+
+            if succeed:
+                all_succeed = True
+                with open("./verilog_debug.logs", "a") as file: file.write(f"{problem} Debug Sample {i}: Succeed!!!\n")
+                break
+            else:
+                with open("./verilog_debug.logs", "a") as file: file.write(f"{problem} Debug Sample {i}: Failed!!!\n")
+        
+        if all_succeed:
+            with open("./verilog_debug.logs", "a") as file: file.write(f"{problem} Debug: Succeed!!!\n")
+        else:
+            with open("./verilog_debug.logs", "a") as file: file.write(f"{problem} Debug: Failed!!!\n")
+
+def calculate_count():
+    file_name_list, file_path_list = read_folder("D:\◊¿√Ê\Verilog_Debug\Knowledge_Base")
+    
+    ac, mc, cc, ic, cl, sl = 0, 0, 0, 0, 0, 0
+
+    for file_path in file_path_list:
+        with open(file_path, "r", encoding = 'utf-8', errors = 'ignore') as file:
+            text = file.read()
+
+        if "[Design Category]: Arithmetic Circuits" in text: ac = ac + 1
+        if "[Design Category]: Memory Circuits" in text: mc = mc + 1
+        if "[Design Category]: Control Circuits" in text: cc = cc + 1
+        if "[Design Category]: Interface Circuits" in text: ic = ic + 1
+        if "[Design Category]: Combinational Logic" in text: cl = cl + 1
+        if "[Design Category]: Sequential Logic" in text: sl = sl + 1
+
+    print(Fore.RED + f"{ac}; {mc}; {cc}; {ic}; {cl}; {sl}")
+
+
+if __name__ == "__main__":
+    test_problem_id(model_name = 'gpt-4-turbo')
+    #local_knowledge_base_annotate()
+    #github_repo_annotate()
+    #test()
+    #print("123")
+    #monitoring()
+    #calculate_count()
+    #test_problem_id(model_name = 'gpt-4-turbo')

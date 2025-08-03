@@ -1,0 +1,27 @@
+[Keyword]: ece241 2014 q1c
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+This design implements an 8-bit adder with overflow detection. It adds two 8-bit numbers and provides the sum as well as an overflow flag that indicates if the addition resulted in a signed overflow.
+
+[Input Signal Description]:
+a[7:0]: An 8-bit input operand for the addition.
+b[7:0]: Another 8-bit input operand for the addition.
+
+[Output Signal Description]:
+s[7:0]: The 8-bit result of the addition of inputs a and b.
+overflow: A 1-bit signal that indicates if a signed overflow occurred during the addition. It is set to 1 if both input operands have the same sign and the result has a different sign.
+
+[Design Detail]: 
+module topmodule (
+    input [7:0] a,
+    input [7:0] b,
+    output [7:0] s,
+    output overflow
+); //
+ 
+    assign s = a + b;
+    assign overflow = (a[7] == b[7] && a[7] != s[7]) ? 1 : 0;
+
+endmodule

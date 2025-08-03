@@ -1,0 +1,37 @@
+[Keyword]: review2015 shiftcount
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a 4-bit shift register with additional functionality to decrement the register value. The register can either shift its contents left by one bit and load a new bit from the input, or decrement its value by 1, depending on the control signals.
+
+[Input Signal Description]:
+- clk: Clock signal that triggers the operations on the rising edge.
+- shiftena: Control signal to enable the shift operation. When high, the register shifts left and loads the new bit from the 'data' input.
+- countena: Control signal to enable the count operation. When high, the register decrements its current value by 1.
+- data: Input data bit to be shifted into the register when 'shiftena' is high.
+
+[Output Signal Description]:
+- q[3:0]: 4-bit output representing the current state of the register. It reflects the result of either the shift operation or the decrement operation based on the control signals.
+
+[Design Detail]: 
+module topmodule (
+    input clk,
+    input shiftena,
+    input countena,
+    input data,
+    output [3:0] q);
+
+    always @(posedge clk) begin
+        if (shiftena) begin
+            q <= {q[2:0], data};  // an useful skill
+        end
+        else if (countena) begin
+            q <= q - 1;
+        end
+        else begin
+            q <= q;
+        end
+    end
+
+endmodule

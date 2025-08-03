@@ -1,0 +1,27 @@
+[Keyword]: m2014 q4a
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a simple latch that captures and holds the value of the input signal 'd' when the enable signal 'ena' is high. The output 'q' reflects the input 'd' when enabled.
+
+[Input Signal Description]:
+d: A single-bit data input signal that is captured by the latch.
+ena: A single-bit enable signal that controls when the input 'd' is captured and transferred to the output 'q'.
+
+[Output Signal Description]:
+q: A single-bit output signal that holds the value of the input 'd' when the enable signal 'ena' is high.
+
+[Design Detail]: 
+module topmodule (
+    input d, 
+    input ena,
+    output q);
+    
+    always @(*) begin
+        if (ena) begin
+            q <= d;
+        end
+    end
+
+endmodule

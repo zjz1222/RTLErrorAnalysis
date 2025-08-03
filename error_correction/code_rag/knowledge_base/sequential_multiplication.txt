@@ -1,0 +1,49 @@
+[Keyword]: sequential_multiplication
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a sequential multiplier circuit that multiplies two 8-bit numbers, `a` and `b`, and produces a 16-bit product `op`. The circuit uses a series of registers and combinational logic to perform the multiplication over several clock cycles. The `valid` signal indicates when the multiplication result is ready.
+
+[Input Signal Description]:
+- `a[7:0]`: 8-bit input operand.
+- `b[7:0]`: 8-bit input operand.
+- `clk`: Clock signal used to synchronize the operations.
+- `reset`: Resets the circuit to its initial state.
+- `load`: Signal to load the input operands into the circuit.
+
+[Output Signal Description]:
+- `op[15:0]`: 16-bit output representing the product of `a` and `b`.
+- `valid`: Output signal indicating that the multiplication result is ready and valid.
+
+
+[Design Detail]:
+
+module final12 (a,b,op,load,reset,clk,valid);
+input [7:0] a,b;
+output [15:0] op;
+output valid;
+input clk,reset,load;
+wire [7:0] x,y,z,s,po,lo;
+wire c,v1,l,t;
+
+s1 u1 (reset,a,clk,x,load);
+s2 u2 (reset,load,clk,z,b);
+assign y=x & {8{z[0]}};
+counter u5 (t,l,clk);
+assign valid=l;
+adder u3 (y,po,c,s);
+s3 u4 (clk,v1,{c,s[7:1]},l,po);
+ s4 e1 (clk,v,s[0],l,lo);
+assign op={po,lo};
+assign v1= reset|load;
+assign t=reset|load;
+
+always @(l)
+begin
+if(op==a*b)
+$display("the product of a=%d ,b=%d  is p=%d",a,b,op);
+else
+$display("Incorrect operation");
+end
+endmodule

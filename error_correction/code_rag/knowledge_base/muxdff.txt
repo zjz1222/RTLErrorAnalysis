@@ -1,0 +1,31 @@
+[Keyword]: muxdff
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a simple D-type flip-flop with a load-enable feature. It captures the input data based on the clock edge and the load signal. If the load signal (L) is high, the flip-flop captures the data from the `rin` input; otherwise, it captures the data from the `qin` input.
+
+[Input Signal Description]:
+- `clk`: Clock signal that triggers the data capture on its rising edge.
+- `L`: Load-enable signal that determines which input data to capture.
+- `rin`: Data input that is captured when the load-enable signal (L) is high.
+- `qin`: Data input that is captured when the load-enable signal (L) is low.
+
+[Output Signal Description]:
+- `Q`: The output of the flip-flop, which holds the captured data based on the clock and load-enable conditions.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input L,
+    input rin,
+    input qin,
+    output reg Q);
+    
+    always @(posedge clk) begin
+        Q <= L ? rin : qin;
+    end
+
+endmodule
+```

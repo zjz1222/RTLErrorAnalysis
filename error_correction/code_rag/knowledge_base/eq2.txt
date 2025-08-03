@@ -1,0 +1,33 @@
+[Keyword]: eq2
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+The design is a 2-bit equality comparator. It checks if two 2-bit input vectors, `a` and `b`, are equal. The output `aeqb` is high (1) if both input vectors are equal, otherwise it is low (0).
+
+[Input Signal Description]:
+- `a[1:0]`: A 2-bit input vector.
+- `b[1:0]`: Another 2-bit input vector to be compared with `a`.
+
+[Output Signal Description]:
+- `aeqb`: A single-bit output signal that is high if the input vectors `a` and `b` are equal, otherwise it is low.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module eq2(
+	input wire[1:0] a, b, 
+	output wire aeqb 
+    );
+
+	// internal signal declar.ation 
+	wire eO, e1;
+
+	// instantiate ~H'O I- bit comparators 
+	eq1 eq_bit0_unit(.i0(a[0]), .i1(b[0]) , .eq(eO)) ; 
+	eq1 eq_bitl_unit(.eq(e1), .i0(a[1]), .i1(b[1])); 
+ // a and b are equal if individual bits are equal 
+	assign aeqb = eO & e1; 
+endmodule 
+

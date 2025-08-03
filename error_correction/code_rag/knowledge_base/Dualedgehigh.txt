@@ -1,0 +1,33 @@
+[Keyword]: Dualedgehigh
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a dual-edge triggered flip-flop is triggered on both edges of the clock that captures the input signal `d` on both the rising and falling edges of the clock signal `clk`. It uses two registers to store the value of `d` at different clock edges and outputs one of these values based on the current state of the clock.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize the capturing of the input signal `d`. The circuit responds to both the positive and negative edges of this signal.
+- `d`: Data input signal that is captured and stored in the `status` register on both edges of the clock.
+
+[Output Signal Description]:
+- `q`: Output signal that reflects the value of `d` captured at the most recent clock edge. If the clock is high, it outputs the value captured on the positive edge; if the clock is low, it outputs the value captured on the negative edge.
+
+[Design Detail]: 
+```verilog
+module TopModule (
+  input clk,
+  input d,
+  output reg q
+);
+
+  reg qp, qn;
+  always @(posedge clk)
+    qp <= d;
+  always @(negedge clk)
+    qn <= d;
+
+  always @(*)
+    q <= clk ? qp : qn;
+
+endmodule
+```

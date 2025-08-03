@@ -1,0 +1,67 @@
+[Keyword]: ps2_rxtx
+
+[Design Category]: Interface Circuits
+
+[Design Function Description]:  
+The design implements a PS/2 interface for both receiving and transmitting data. It includes a PS/2 receiver (`ps2_rx`) and a PS/2 transmitter (`ps2_tx`). The module handles the communication with a PS/2 device, allowing data to be sent and received over the PS/2 protocol.
+
+[Input Signal Description]:  
+- `clk`: Clock signal for synchronizing the operations.
+- `rst_n`: Active-low reset signal to initialize the system.
+- `din[7:0]`: 8-bit data input for transmission.
+- `wr_ps2`: Write enable signal for initiating data transmission.
+- `ps2d`: PS/2 data line, used as both input and output.
+- `ps2c`: PS/2 clock line, used as both input and output.
+
+[Output Signal Description]:  
+- `dout[10:0]`: 11-bit data output received from the PS/2 device, including start bit, 8 data bits, parity bit, and stop bit.
+- `rx_done_tick`: Signal indicating the completion of a data reception.
+- `tx_done_tick`: Signal indicating the completion of a data transmission.
+
+
+
+
+
+
+
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module ps2_rxtx(
+	input clk,rst_n,
+	input[7:0] din, //8 bit data for tx
+	input wr_ps2,
+	inout ps2d,ps2c,
+	output[10:0] dout, //11bit-data received from rx
+	output rx_done_tick,
+	output tx_done_tick
+    );
+	 wire tx_idle;
+	 
+	 ps2_rx m0
+	 (
+		.clk(clk),
+		.rst_n(rst_n),
+		.rx_en(tx_idle),
+		.ps2d(ps2d),
+		.ps2c(ps2c),
+		.dout(dout), //startbit,8databits,paritybit,stopbit
+		.rx_done_tick(rx_done_tick)
+    );
+	 
+	 ps2_tx m1
+	 (
+		.clk(clk),
+		.rst_n(rst_n),
+		.wr_ps2(wr_ps2),
+		.din(din),
+		.ps2d(ps2d),
+		.ps2c(ps2c),
+		.tx_idle(tx_idle),
+		.tx_done_tick(tx_done_tick)
+    );
+
+
+endmodule

@@ -1,0 +1,28 @@
+[Keyword]: Tbtb1
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a simple testbench that generates a sequence of input patterns over time. It uses an initial block to simulate changes in the output signals A and B at specific time intervals.
+
+[Input Signal Description]:
+There are no explicit input signals in this module. The design is focused on generating output patterns over time.
+
+[Output Signal Description]:
+A: A reg type output signal that changes its value over time according to the specified timing in the initial block.
+B: A reg type output signal that also changes its value over time according to the specified timing in the initial block.
+
+[Design Detail]: 
+module topmodule ( output reg A, output reg B );//
+    
+    // generate input patterns here
+    initial begin
+        A = 0;
+        B = 0;
+        #10 A = 1;
+        #5  B = 1;
+        #5  A = 0;
+        #20 B = 0;
+    end
+
+endmodule

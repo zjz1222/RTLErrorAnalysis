@@ -1,0 +1,103 @@
+[Keyword]: max_counter.sv
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements an up/down counter with the ability to track its maximum value. The counter can be incremented or decremented by a specified delta value, and it can be cleared or loaded with a new value. Additionally, the design keeps track of the maximum value the counter has reached and provides overflow indicators for both the current counter and the maximum value.
+
+[Input Signal Description]:
+- `clk_i`: Clock input signal for synchronizing the counter operations.
+- `rst_ni`: Active-low reset signal to initialize the counter and maximum value tracking.
+- `clear_i`: Synchronous clear signal for resetting the counter value.
+- `clear_max_i`: Synchronous clear signal for resetting the maximum value tracking.
+- `en_i`: Enable signal to allow the counter to increment or decrement.
+- `load_i`: Signal to load a new value into the counter.
+- `down_i`: Signal to determine the counting direction; when high, the counter decrements.
+- `delta_i`: The value by which the counter is incremented or decremented.
+- `d_i`: The new value to be loaded into the counter when `load_i` is active.
+
+[Output Signal Description]:
+- `q_o`: The current value of the counter.
+- `max_o`: The maximum value the counter has reached since the last reset or clear.
+- `overflow_o`: Indicates if the counter has overflowed.
+- `overflow_max_o`: Indicates if the maximum value tracking has overflowed.
+
+
+[Design Detail]:
+// Copyright 2018 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the "License"); you may not use this file except in
+// compliance with the License. You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
+// Up/down counter that tracks its maximum value
+
+module max_counter #(
+    parameter int unsigned WIDTH = 4
+) (
+    input  logic             clk_i,
+    input  logic             rst_ni,
+    input  logic             clear_i,       // synchronous clear for counter
+    input  logic             clear_max_i,   // synchronous clear for maximum value
+    input  logic             en_i,          // enable the counter
+    input  logic             load_i,        // load a new value
+    input  logic             down_i,        // downcount, default is up
+    input  logic [WIDTH-1:0] delta_i,       // counter delta
+    input  logic [WIDTH-1:0] d_i,
+    output logic [WIDTH-1:0] q_o,
+    output logic [WIDTH-1:0] max_o,
+    output logic             overflow_o,
+    output logic             overflow_max_o
+);
+    logic [WIDTH-1:0] max_d, max_q;
+    logic overflow_max_d, overflow_max_q;
+
+    delta_counter #(
+        .WIDTH           (WIDTH),
+        .STICKY_OVERFLOW (1'b1)
+    ) i_counter (
+        .clk_i,
+        .rst_ni,
+        .clear_i,
+        .en_i,
+        .load_i,
+        .down_i,
+        .delta_i,
+        .d_i,
+        .q_o,
+        .overflow_o
+    );
+
+    always_comb begin
+        max_d = max_q;
+        max_o = max_q;
+        overflow_max_d = overflow_max_q;
+        if (clear_max_i) begin
+            max_d = '0;
+            overflow_max_d = 1'b0;
+        end else if (q_o > max_q) begin
+            max_d = q_o;
+            max_o = q_o;
+            if (overflow_o) begin
+                overflow_max_d = 1'b1;
+            end
+        end
+    end
+
+    assign overflow_max_o = overflow_max_q;
+
+    always_ff @(posedge clk_i, negedge rst_ni) begin
+        if (!rst_ni) begin
+           max_q <= '0;
+           overflow_max_q <= 1'b0;
+        end else begin
+           max_q <= max_d;
+           overflow_max_q <= overflow_max_d;
+        end
+    end
+
+endmodule

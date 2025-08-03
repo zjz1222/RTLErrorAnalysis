@@ -1,0 +1,62 @@
+[Keyword]: complex_multiplication
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+The design implements a complex number multiplication circuit. It takes two 16-bit inputs, each representing a complex number with 8 bits for the real part and 8 bits for the imaginary part. The circuit outputs a 32-bit product, which is the result of multiplying the two complex numbers.
+
+[Input Signal Description]:
+- c1[15:0]: A 16-bit input signal representing the first complex number, where c1[15:8] is the real part and c1[7:0] is the imaginary part.
+- c2[15:0]: A 16-bit input signal representing the second complex number, where c2[15:8] is the real part and c2[7:0] is the imaginary part.
+
+[Output Signal Description]:
+- product[31:0]: A 32-bit output signal representing the product of the two complex numbers. The real part of the product is calculated as (c1[15:8] * c2[15:8]) - (c1[7:0] * c2[7:0]), and the imaginary part is (c1[15:8] * c2[7:0]) + (c1[7:0] * c2[15:8]).
+
+
+[Design Detail]:
+module compmul(c1,c2,product);
+input [15:0]c1,c2;
+output [31:0]product;
+assign product={((c1[15:8]*c2[15:8])-(c1[7:0]*c2[7:0])),((c1[15:8]*c2[7:0])+(c1[7:0]*c2[15:8]))};
+endmodule
+
+module compmul_tb();
+ reg [15:0]c1,c2;
+ wire [31:0]product;
+ compmul a(c1,c2,product);
+ initial
+ begin
+ c1<=16'b0000001000000010;
+ c2<=16'b0000011000000010;
+ #50
+ $display("output for mul %b",product);
+ c1<=16'b00001111100001000;
+ c2<=16'b00000000000010000;
+ #50
+ $display("output for mul %b",product);
+ c1<=16'b0000101110001000;
+ c2<=16'b0000000000001000;
+ #50
+ $display("output for mul %b",product);
+ c1<=16'b0000100000001000;
+ c2<=16'b0001111000001000;
+ #50
+ $display("output for mul %b",product);
+ c1<=16'b0000100001101000;
+ c2<=16'b0000001000001000;
+ #50
+ $display("output for mul %b",product);
+ c1<=16'b0000100000001000;
+ c2<=16'b0001111111101000;
+ #50
+ $display("output for mul %b",product);
+ c1<=16'b1111111111111111;
+ c2<=16'b1111111111111111;
+ #50
+ $display("output for mul %b",product);
+
+ end
+endmodule
+
+
+

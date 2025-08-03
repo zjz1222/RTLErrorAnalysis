@@ -1,0 +1,26 @@
+[Keyword]: m2014 q4d
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a simple sequential circuit that performs a bitwise XOR operation between the current output and the input signal on every rising edge of the clock. It effectively toggles the output bit based on the input signal.
+
+[Input Signal Description]:
+clk: Clock signal that triggers the operation on its rising edge.
+in: Input signal that is XORed with the current output to determine the next state of the output.
+
+[Output Signal Description]:
+out: The output signal that holds the result of the XOR operation between the previous output and the input signal. It is updated on each rising edge of the clock.
+
+[Design Detail]: 
+module topmodule (
+    input clk,
+    input in, 
+    output reg out
+);
+    
+    always @(posedge clk) begin
+        out <= out ^ in;
+    end
+
+endmodule

@@ -1,0 +1,37 @@
+[Keyword]: Count15
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a 4-bit binary counter with a synchronous reset. The counter increments on each positive edge of the clock and resets to zero when it reaches the maximum count of 15 or when the reset signal is active.
+
+[Input Signal Description]:
+- clk: Clock signal that triggers the counter to increment on its positive edge.
+- reset: Synchronous active-high reset signal that sets the counter output to zero when asserted.
+
+[Output Signal Description]:
+- q[3:0]: 4-bit output representing the current count value of the counter.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input reset,      // Synchronous active-high reset
+    output [3:0] q);
+    
+    always @(posedge clk) begin
+        if(reset) begin
+            q <= 0;
+        end
+        else begin
+            if(q == 15) begin
+                q <= 0;
+            end
+            else begin
+                q <= q + 1;
+            end
+        end
+    end
+
+endmodule
+```

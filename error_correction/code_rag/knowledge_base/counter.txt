@@ -1,0 +1,43 @@
+[Keyword]: counter
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a simple counter that counts clock cycles. It resets the count to zero when the reset signal is high and sets an output signal 'l' to high when the count reaches 7.
+
+[Input Signal Description]:
+- reset: A signal used to reset the counter to zero. When high, it initializes the counter.
+- clk: The clock signal that drives the counter. The counter increments on each rising edge of the clock.
+
+[Output Signal Description]:
+- l: A signal that goes high when the counter reaches the value of 7, indicating that the count has completed a cycle.
+
+
+[Design Detail]:
+ //Counter 
+
+module counter(reset,l,clk);
+
+input reset,clk;
+output reg l;
+integer i;
+
+always @(posedge clk)
+begin
+if(reset)
+begin
+i=0;
+l=0;
+end
+else
+begin
+if(i==7)
+l=1;
+else
+begin
+i=i+1;
+l=0;
+end
+end
+end
+endmodule

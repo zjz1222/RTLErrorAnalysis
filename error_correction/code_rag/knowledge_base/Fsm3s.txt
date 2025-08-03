@@ -1,0 +1,48 @@
+[Keyword]: Fsm3s
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) with four states (A, B, C, D). The FSM transitions between these states based on the input signal 'in'. The output 'out' is asserted when the FSM is in state D.
+
+[Input Signal Description]:
+- clk: Clock signal used to synchronize state transitions.
+- in: Input signal that influences state transitions.
+- reset: Synchronous reset signal that initializes the FSM to state A.
+
+[Output Signal Description]:
+- out: Output signal that is asserted (set to 1) when the FSM is in state D, otherwise it is deasserted (set to 0).
+
+[Design Detail]: 
+module topmodule(
+    input clk,
+    input in,
+    input reset,
+    output out
+);
+    
+    reg [2:0] state, nextstate;
+    parameter A=0, B=1, C=2, D=3;
+    
+    // State transition logic
+    always @(*) begin
+        case (state)
+            A: nextstate <= in ? B : A;
+            B: nextstate <= in ? B : C;
+            C: nextstate <= in ? D : A;
+            D: nextstate <= in ? B : C;
+        endcase
+    end
+
+    // State flip-flops with synchronous reset
+    always @(posedge clk) begin
+        if(reset) begin
+            state <= A;
+        end else begin
+            state <= nextstate;
+        end
+    end
+
+    // Output logic
+    assign out = (state == D);
+endmodule

@@ -1,0 +1,34 @@
+[Keyword]: Rule90
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a shift register with a specific feedback mechanism. When the load signal is high, the register loads the input data. Otherwise, it performs a bitwise operation involving a right shift and an XOR operation on the stored data.
+
+[Input Signal Description]:
+- clk: Clock signal that triggers the operations on the rising edge.
+- load: Control signal that determines whether to load new data or perform the shift and XOR operation.
+- data[511:0]: 512-bit input data to be loaded into the register when the load signal is high.
+
+[Output Signal Description]:
+- q[511:0]: 512-bit output that holds the current state of the register. It either reflects the loaded data or the result of the shift and XOR operation.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input load,
+    input [511:0] data,
+    output reg [511:0] q );
+    
+    always @(posedge clk) begin
+        if(load) begin
+            q <= data;    
+        end
+        else begin
+            q <= {1'b0, q[511:1]} ^ {q[510:0], 1'b0};    
+        end
+    end
+
+endmodule
+```

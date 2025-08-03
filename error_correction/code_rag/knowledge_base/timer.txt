@@ -1,0 +1,46 @@
+[Keyword]: timer
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a 2-second countdown timer. The timer starts counting down from a preset value when triggered and signals when the countdown reaches zero.
+
+[Input Signal Description]:
+- clk: Clock signal used to synchronize the timer operations.
+- rst_n: Active-low reset signal to initialize or reset the timer.
+- timer_start: Signal to start the timer countdown from the preset value.
+- timer_tick: Signal that ticks at 60Hz, used to decrement the timer value.
+
+[Output Signal Description]:
+- timer_up: Output signal that indicates the timer has reached zero.
+
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module timer( //2 second timer
+	input clk,rst_n,
+	input timer_start,timer_tick,
+	output timer_up
+    );
+	 
+	 reg[6:0] timer_q=0,timer_d;
+	 always @(posedge clk,negedge rst_n) begin
+		if(!rst_n) timer_q<=0;
+		else timer_q<=timer_d;
+	 end
+	 
+	 always @* begin
+		timer_d=timer_q;
+		if(timer_start) begin
+			timer_d=7'b111_1111;
+		end
+		else if(timer_tick) begin //timer tick is 60Hz, thus 2 seconds will be after 120 ticks(or 7'b111_1111)
+			timer_d=(timer_q==0)? 0:timer_q-1;
+		end
+	 end
+	 assign timer_up= (timer_q==0);
+
+
+endmodule

@@ -1,0 +1,38 @@
+[Keyword]: binary_decoder_3x8
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+The circuit is a 3-to-8 binary decoder. It takes a 3-bit binary input and decodes it into an 8-bit output, where only one of the output bits is set to '1' based on the input value, and the rest are '0'. This is achieved by using two 2-to-4 decoders, with the most significant bit of the input used to enable one of the two decoders.
+
+[Input Signal Description]:
+a[2:0]: A 3-bit input signal that represents a binary number from 0 to 7. This input is used to determine which one of the 8 output lines will be activated.
+
+[Output Signal Description]:
+bcode[7:0]: An 8-bit output signal where only one bit is set to '1' based on the input value, and the rest are '0'. This represents the decoded output of the 3-to-8 decoder.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module binary_decoder_3x8(
+	input[2:0] a,
+	output[7:0] bcode
+    );
+	 
+	 binary_decoder_2x4 m0
+	 (
+		 .en({!a[2]}),
+		 .a(a[1:0]),
+		 .bcode(bcode[3:0])
+    );
+	 
+	 binary_decoder_2x4 m1
+	 (
+		 .en(a[2]),
+		 .a(a[1:0]),
+		 .bcode(bcode[7:4])
+    );
+
+
+endmodule

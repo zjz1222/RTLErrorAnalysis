@@ -1,0 +1,32 @@
+[Keyword]: m2014 q4c
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a D flip-flop with a synchronous reset. The flip-flop captures the value of the input 'd' on the rising edge of the clock 'clk' and outputs it as 'q'. If the reset 'r' is asserted during the clock edge, the output 'q' is reset to 0.
+
+[Input Signal Description]:
+- clk: Clock signal that triggers the flip-flop on its rising edge.
+- d: Data input signal that is captured by the flip-flop on the rising edge of the clock.
+- r: Synchronous reset signal that, when high, resets the output 'q' to 0 on the rising edge of the clock.
+
+[Output Signal Description]:
+- q: The output signal that holds the value of the input 'd' after the rising edge of the clock, unless the reset 'r' is asserted, in which case it is set to 0.
+
+[Design Detail]: 
+module topmodule (
+    input clk,
+    input d, 
+    input r,   // synchronous reset
+    output q);
+    
+    always @(posedge clk) begin
+        if(r) begin
+            q <= 0;
+        end
+        else begin
+            q <= d;
+        end
+    end
+
+endmodule

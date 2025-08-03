@@ -1,0 +1,38 @@
+[Keyword]: Modulefadd
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+The design implements a 32-bit ripple-carry adder using two 16-bit adders. It takes two 32-bit input numbers and produces their 32-bit sum. The addition is performed in two stages: the lower 16 bits are added first, and the carry-out from this addition is used as the carry-in for the addition of the upper 16 bits.
+
+[Input Signal Description]:
+- a[31:0]: A 32-bit input operand for the addition.
+- b[31:0]: Another 32-bit input operand for the addition.
+
+[Output Signal Description]:
+- sum[31:0]: The 32-bit result of the addition of inputs `a` and `b`.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input [31:0] a,
+    input [31:0] b,
+    output [31:0] sum
+);//
+    wire cin1, cout1, cout2;
+    wire [15:0] sum1, sum2;
+    assign cin1 = 0;
+    add16 instance1(.a(a[15:0]), .b(b[15:0]), .cin(cin1), .cout(cout1), .sum(sum1));
+    add16 instance2(.a(a[31:16]), .b(b[31:16]), .cin(cout1), .cout(cout2), .sum(sum2));
+    
+    assign sum = {sum2, sum1};
+
+endmodule
+
+module add1 ( input a, input b, input cin,   output sum, output cout );
+
+// Full adder module here
+    assign {cout, sum} = a + b + cin;
+
+endmodule
+```

@@ -1,0 +1,50 @@
+[Keyword]: Fsm1s
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a simple finite state machine (FSM) with two states, A and B. The FSM transitions between these states based on the input signal 'in'. The output 'out' is determined by the current state, specifically it is high when the FSM is in state B.
+
+[Input Signal Description]:
+- clk: Clock signal that synchronizes the state transitions.
+- reset: Synchronous reset signal that initializes the FSM to state B when asserted.
+- in: Input signal that influences state transitions between A and B.
+
+[Output Signal Description]:
+- out: Output signal that is high when the FSM is in state B and low when in state A.
+
+[Design Detail]: 
+```verilog
+// Note the Verilog-1995 module declaration syntax here:
+module topmodule(clk, reset, in, out);
+    input clk;
+    input reset;    // Synchronous reset to state B
+    input in;
+    output out;//  
+    reg out;
+
+    // Fill in state name declarations
+    parameter A = 0, B = 1;
+
+    reg presentstate, nextstate;
+
+    always @(posedge clk) begin
+        if (reset) begin  
+            // Fill in reset logic
+            presentstate <= B;
+        end else begin
+            presentstate <= nextstate;
+        end
+    end
+
+    always @(*) begin
+        case (presentstate)
+            A: nextstate <= in ? A : B;
+            B: nextstate <= in ? B : A;
+        endcase
+    end
+
+    assign out = (presentstate == B);
+
+endmodule
+```

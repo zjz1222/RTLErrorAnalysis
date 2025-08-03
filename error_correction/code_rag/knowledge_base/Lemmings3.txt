@@ -1,0 +1,120 @@
+[Keyword]: Lemmings3
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) to control the behavior of a Lemming character in a game-like scenario. The Lemming can walk left or right, dig, or fall off the ground, and the FSM manages these states based on input signals such as ground presence, bumping into walls, and digging commands.
+
+[Input Signal Description]:
+- `clk`: Clock signal to synchronize state transitions.
+- `areset`: Asynchronous reset signal that initializes the Lemming to walk left.
+- `bumpleft`: Signal indicating the Lemming has bumped into a wall on the left.
+- `bumpright`: Signal indicating the Lemming has bumped into a wall on the right.
+- `ground`: Signal indicating whether the Lemming is on the ground.
+- `dig`: Signal indicating the Lemming should start digging.
+
+[Output Signal Description]:
+- `walkleft`: Signal indicating the Lemming is walking left.
+- `walkright`: Signal indicating the Lemming is walking right.
+- `aaah`: Signal indicating the Lemming is falling (not on the ground).
+- `digging`: Signal indicating the Lemming is currently digging.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input areset,    // Freshly brainwashed Lemmings walk left.
+    input bumpleft,
+    input bumpright,
+    input ground,
+    input dig,
+    output walkleft,
+    output walkright,
+    output aaah,
+    output digging ); 
+
+    parameter left = 0, right = 1;
+    parameter leftground = 2, rightground = 3;
+    parameter leftdig = 4, rightdig = 5;
+
+    reg [2:0] state, nextstate;
+
+    always @(posedge clk or posedge areset) begin
+        if (areset) begin
+            state <= left;
+        end
+        else begin
+            state <= nextstate;
+        end
+    end
+
+    always @(*) begin
+        case (state)
+            left: begin
+                if (ground) begin
+                    if (dig) begin
+                        nextstate <= leftdig;
+                    end
+                    else begin
+                        nextstate <= bumpleft ? right : left;
+                    end
+                end
+                else begin
+                    nextstate <= leftground;
+                end
+            end
+            right: begin
+                if (ground) begin
+                    if (dig) begin
+                        nextstate <= rightdig;
+                    end
+                    else begin
+                        nextstate <= bumpright ? left : right;
+                    end
+                end
+                else begin
+                    nextstate <= rightground;
+                end
+            end
+            leftdig: begin
+                if (ground) begin
+                    nextstate <= leftdig;
+                end
+                else begin
+                    nextstate <= leftground;
+                end
+            end
+            rightdig: begin
+                if (ground) begin
+                    nextstate <= rightdig;
+                end
+                else begin
+                    nextstate <= rightground;
+                end
+            end
+            leftground: begin
+                if (ground) begin
+                    nextstate <= left;
+                end
+                else begin
+                    nextstate <= leftground;
+                end
+            end
+            rightground: begin
+                if (ground) begin
+                    nextstate <= right;
+                end
+                else begin
+                    nextstate <= rightground;
+                end
+            end
+        endcase
+    end
+
+    assign walkleft = (state == left);
+    assign walkright = (state == right);
+    assign aaah = ((state == leftground) || (state == rightground));
+    assign digging = ((state == leftdig) || (state == rightdig));
+
+endmodule
+```

@@ -1,0 +1,43 @@
+[Keyword]: Alwayscase2v
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This circuit is a priority encoder that takes a 4-bit input and outputs a 2-bit position of the highest priority '1' bit. If no bits are set, it outputs 0.
+
+[Input Signal Description]:
+in[3:0]: A 4-bit input signal representing a binary number where each bit can be either 0 or 1.
+
+[Output Signal Description]:
+pos[1:0]: A 2-bit output signal that indicates the position of the highest priority '1' bit in the input. If no bits are set, it outputs 0.
+
+[Design Detail]: 
+```verilog
+// synthesis veriloginputversion verilog2001
+module topmodule (
+    input [3:0] in,
+    output reg [1:0] pos  );
+    
+    always @(*) begin
+        case(in)
+            4'b0000 : pos = 0;
+            4'b0001 : pos = 0;
+            4'b0010 : pos = 1;
+            4'b0011 : pos = 0;
+            4'b0100 : pos = 2;
+            4'b0101 : pos = 0;
+            4'b0110 : pos = 1;
+            4'b0111 : pos = 0;
+            4'b1000 : pos = 3;
+            4'b1001 : pos = 0;
+            4'b1010 : pos = 1;
+            4'b1011 : pos = 0;
+            4'b1100 : pos = 2;
+            4'b1101 : pos = 0;
+            4'b1110 : pos = 1;
+            4'b1111 : pos = 0;
+        endcase
+    end
+
+endmodule
+```

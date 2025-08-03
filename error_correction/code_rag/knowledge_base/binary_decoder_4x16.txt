@@ -1,0 +1,52 @@
+[Keyword]: binary_decoder_4x16
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+The design is a 4-to-16 binary decoder. It takes a 4-bit input and decodes it into a 16-bit output, where only one of the 16 output bits is set to '1' based on the binary value of the input, and the rest are set to '0'.
+
+[Input Signal Description]:
+a[3:0]: A 4-bit input signal that represents a binary number. This input is used to determine which one of the 16 output lines will be activated.
+
+[Output Signal Description]:
+bcode[15:0]: A 16-bit output signal where only one bit is set to '1' corresponding to the binary value of the input 'a', and all other bits are '0'.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module binary_decoder_4x16(
+	input[3:0] a,
+	output[15:0] bcode
+    );
+	 binary_decoder_2x4 m0
+	 (
+		 .en({!a[3] && !a[2]}),
+		 .a(a[1:0]),
+		 .bcode(bcode[3:0])
+    );
+	 
+	 binary_decoder_2x4 m1
+	 (
+		 .en({!a[3] && a[2]}),
+		 .a(a[1:0]),
+		 .bcode(bcode[7:4])
+    );
+	 
+	 binary_decoder_2x4 m2
+	 (
+		 .en({a[3] && !a[2]}),
+		 .a(a[1:0]),
+		 .bcode(bcode[11:8])
+    ); 
+	 
+	 binary_decoder_2x4 m3
+	 (
+		 .en({a[3] && a[2]}),
+		 .a(a[1:0]),
+		 .bcode(bcode[15:12])
+    );
+	 
+
+
+endmodule

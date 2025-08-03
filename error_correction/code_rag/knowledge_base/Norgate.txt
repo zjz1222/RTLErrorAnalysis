@@ -1,0 +1,22 @@
+[Keyword]: Norgate
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a NOR gate, which outputs the logical NOR of two input signals. The output is true only when both inputs are false.
+
+[Input Signal Description]:
+a: A single-bit input signal.
+b: A single-bit input signal.
+
+[Output Signal Description]:
+out: A single-bit output signal that represents the NOR of inputs a and b. It is true (1) only when both a and b are false (0).
+
+[Design Detail]: 
+module top_module( 
+    input a, 
+    input b, 
+    output out 
+);
+    assign out = ~(a | b);
+endmodule

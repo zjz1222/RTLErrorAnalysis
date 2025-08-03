@@ -1,0 +1,41 @@
+[Keyword]: Countslow
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a decade counter that counts from 0 to 9. The counter increments on each positive edge of the clock signal when the `slowena` signal is high. If the counter reaches 9, it resets to 0 on the next clock cycle. The counter can also be reset to 0 asynchronously using the `reset` signal.
+
+[Input Signal Description]:
+- `clk`: Clock signal that triggers the counter to evaluate and potentially increment its value on each positive edge.
+- `slowena`: Enable signal that allows the counter to increment when high. If low, the counter holds its current value.
+- `reset`: Asynchronous reset signal that sets the counter value to 0 when high, regardless of the clock or enable signals.
+
+[Output Signal Description]:
+- `q[3:0]`: 4-bit output representing the current count value of the counter, ranging from 0 to 9.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input slowena,
+    input reset,
+    output [3:0] q);
+
+    always @(posedge clk) begin
+        if(reset) begin
+            q <= 0;
+        end
+        else begin
+            if(slowena) begin
+                if(q == 9) begin
+                    q <= 0;
+                end
+                else begin
+                    q <= q + 1;
+                end
+            end
+        end
+    end
+    
+endmodule
+```

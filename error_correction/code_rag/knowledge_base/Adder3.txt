@@ -1,0 +1,36 @@
+[Keyword]: Adder3
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+This design implements a 3-bit ripple carry adder. It takes two 3-bit binary numbers and a carry-in bit as inputs and produces a 3-bit sum and a 3-bit carry-out as outputs. The adder performs bitwise addition, propagating carry bits from the least significant bit to the most significant bit.
+
+[Input Signal Description]:
+- a[2:0]: A 3-bit input representing the first operand for the addition.
+- b[2:0]: A 3-bit input representing the second operand for the addition.
+- cin: A single-bit input representing the initial carry-in for the least significant bit addition.
+
+[Output Signal Description]:
+- sum[2:0]: A 3-bit output representing the sum of the input operands and the carry-in.
+- cout[2:0]: A 3-bit output representing the carry-out bits for each bit position of the addition.
+
+[Design Detail]: 
+```verilog
+module topmodule( 
+    input [2:0] a, b,
+    input cin,
+    output [2:0] cout,
+    output [2:0] sum );
+    
+    integer i;
+    assign sum[0] = a[0] ^ b[0] ^ cin;
+    assign cout[0] = a[0] & b[0] | a[0] & cin | b[0] & cin;
+    always @(*) begin
+        for(i = 1; i < 3; i=i+1) begin
+            sum[i] = a[i] ^ b[i] ^ cout[i-1];
+            cout[i] = a[i] & b[i] | a[i] & cout[i-1] | b[i] & cout[i-1];
+        end
+    end
+
+endmodule
+```

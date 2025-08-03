@@ -1,0 +1,20 @@
+[Keyword]: Inverter
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a simple inverter (NOT gate) that outputs the logical negation of the input signal.
+
+[Input Signal Description]:
+in: A single-bit input signal that is to be inverted.
+
+[Output Signal Description]:
+out: A single-bit output signal that represents the logical NOT of the input signal.
+
+[Design Detail]: 
+module top_module( 
+    input in, 
+    output out 
+);
+    assign out = ~in;
+endmodule

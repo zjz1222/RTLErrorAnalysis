@@ -1,0 +1,21 @@
+[Keyword]: m2014 q3
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a specific logic function using a combination of AND, OR, and NOT gates. The function is defined by a specific Boolean expression that takes a 4-bit input and produces a single output.
+
+[Input Signal Description]:
+x[4:1]: A 4-bit input signal where each bit (x[1], x[2], x[3], x[4]) can be either 0 or 1. These bits are used in the logic expression to determine the output.
+
+[Output Signal Description]:
+f: A single-bit output signal that is the result of the logic operation defined by the given Boolean expression. It represents the negation of a combination of conditions applied to the input bits.
+
+[Design Detail]: 
+module topmodule (
+    input [4:1] x, 
+    output f );
+    
+    assign f = ~((~x[2] & ~x[3] & x[4]) | (~x[1] & x[2] & ~x[3] & x[4]) | (x[1] & x[2] & x[3] & ~x[4]) | (~x[1] & x[2] & ~x[3] & ~x[4]));
+
+endmodule

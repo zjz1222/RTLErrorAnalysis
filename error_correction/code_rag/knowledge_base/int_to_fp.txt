@@ -1,0 +1,40 @@
+[Keyword]: int_to_fp
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+The circuit converts an 8-bit signed integer into a 13-bit floating-point representation. The floating-point format includes a sign bit, an 8-bit fraction, and a 4-bit exponent. The integer is normalized to fit into this floating-point format.
+
+[Input Signal Description]:
+integ[7:0]: An 8-bit signed integer input signal. The most significant bit (MSB) is the sign bit, and the remaining 7 bits represent the magnitude of the integer.
+
+[Output Signal Description]:
+fp[12:0]: A 13-bit floating-point output signal. The MSB is the sign bit, the next 4 bits represent the exponent, and the last 8 bits represent the fraction part of the floating-point number.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module int_to_fp(
+	input wire[7:0] integ,
+	output reg[12:0] fp	
+    );
+	 integer i; 
+	 reg finish;
+	 
+	 always @(integ) begin
+	 fp=13'b0;
+	 i=0;
+	 finish=1'b0;
+	 fp[12]=integ[7];  //sign bit of fp is same with integ
+	 for(i=6;i>=0;i=i-1)   //find loc of first bit 1 in the integ
+		 if(integ[i]==1'b1 && finish==1'b0) begin
+		 	fp[7:0] = {1'b0,integ[6:0]}<<(7-i); //8 bit frac value of fp must be normalized so the first bit "1"(excluding the signed bit) of integ must moved to 8th bit
+			fp[11:8] = i+1;   // 4 bit exp value e.g. integ 0000_1111(i=3) willl become fp frac of .1111_0000 when normalized so an exp must be 3+1=4
+			finish=1'b1;
+		 end
+	 end
+	 
+
+
+endmodule

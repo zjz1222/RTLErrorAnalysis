@@ -1,0 +1,29 @@
+[Keyword]: Vector0
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design is a simple signal routing circuit that takes a 3-bit input vector and directly assigns it to a 3-bit output vector. Additionally, it breaks out each bit of the output vector into separate output signals.
+
+[Input Signal Description]:
+vec[2:0]: A 3-bit input vector that serves as the source of the data to be routed to the outputs.
+
+[Output Signal Description]:
+outv[2:0]: A 3-bit output vector that directly mirrors the input vector.
+o0: A single-bit output that corresponds to the least significant bit of the input vector.
+o1: A single-bit output that corresponds to the middle bit of the input vector.
+o2: A single-bit output that corresponds to the most significant bit of the input vector.
+
+[Design Detail]: 
+module top_module ( 
+    input wire [2:0] vec,
+    output wire [2:0] outv,
+    output wire o2,
+    output wire o1,
+    output wire o0
+);
+    assign outv = vec;
+    assign o0 = outv[0];
+    assign o1 = outv[1];
+    assign o2 = outv[2];
+endmodule

@@ -1,0 +1,44 @@
+[Keyword]: stream_filter.sv
+
+[Design Category]: Control Circuits
+
+[Design Function Description]:
+The circuit functions as a stream filter that controls the flow of data between upstream and downstream components. If the `drop_i` signal is asserted (set to 1), the circuit signals readiness to the upstream component regardless of the downstream's state and prevents the propagation of the `valid` signal downstream. If `drop_i` is not asserted, the circuit allows the `valid` signal to pass from upstream to downstream and the `ready` signal to pass from downstream to upstream.
+
+[Input Signal Description]:
+- `valid_i`: A logic signal indicating whether the upstream data is valid and ready to be processed.
+- `drop_i`: A control signal that determines whether the data should be dropped (1) or allowed to pass through (0).
+- `ready_i`: A logic signal from the downstream component indicating whether it is ready to receive data.
+
+[Output Signal Description]:
+- `valid_o`: A logic signal indicating whether the data is valid and should be propagated to the downstream component. It is set to 0 if `drop_i` is 1, otherwise it follows `valid_i`.
+- `ready_o`: A logic signal indicating to the upstream component whether the circuit is ready to receive more data. It is set to 1 if `drop_i` is 1, otherwise it follows `ready_i`.
+
+
+[Design Detail]:
+// Copyright 2018 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the "License"); you may not use this file except in
+// compliance with the License. You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
+// Stream filter: If `drop_i` is `1`, signal `ready` to the upstream regardless of the downstream,
+// and do not propagate `valid` downstream.  Otherwise, connect upstream to downstream.
+module stream_filter (
+    input  logic valid_i,
+    output logic ready_o,
+
+    input  logic drop_i,
+
+    output logic valid_o,
+    input  logic ready_i
+);
+
+    assign valid_o = drop_i ? 1'b0 : valid_i;
+    assign ready_o = drop_i ? 1'b1 : ready_i;
+
+endmodule

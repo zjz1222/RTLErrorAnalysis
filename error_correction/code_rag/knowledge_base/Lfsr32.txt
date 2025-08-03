@@ -1,0 +1,41 @@
+[Keyword]: Lfsr32
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a 32-bit Galois LFSR with taps at bit positions 32, 22, 2, and 1. 
+Reset should be active high synchronous, and should reset the output q to 32'h1.
+The LFSR is used to generate pseudo-random sequences. 
+The register is initialized to 32'h1 upon a reset signal.
+
+[Input Signal Description]:
+- clk: Clock signal that triggers the LFSR to shift and update its state on each rising edge.
+- reset: Active-high synchronous reset signal that initializes the LFSR to 32'h1 when asserted.
+
+[Output Signal Description]:
+- q[31:0]: The 32-bit output of the LFSR, representing the current state of the register.
+
+[Design Detail]: 
+module TopModule (
+  input clk,
+  input reset,
+  output reg [31:0] q
+);
+
+  logic [31:0] q_next;
+  always@(q) begin
+    q_next = q[31:1];
+    q_next[31] = q[0];
+    q_next[21] ^= q[0];
+    q_next[1] ^= q[0];
+    q_next[0] ^= q[0];
+  end
+
+  always @(posedge clk) begin
+    if (reset)
+      q <= 32'h1;
+    else
+      q <= q_next;
+  end
+
+endmodule

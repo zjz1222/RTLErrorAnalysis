@@ -1,0 +1,34 @@
+[Keyword]: Edgedetect
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+The circuit detects positive edges on each bit of an 8-bit input signal. It outputs a corresponding 8-bit signal where each bit indicates whether a positive edge (a transition from 0 to 1) has occurred on the respective input bit.
+
+[Input Signal Description]:
+- clk: Clock signal used to synchronize the detection of positive edges.
+- in[7:0]: 8-bit input signal on which positive edge detection is performed.
+
+[Output Signal Description]:
+- pedge[7:0]: 8-bit output signal where each bit is set to 1 if a positive edge is detected on the corresponding input bit, otherwise it is set to 0.
+
+[Design Detail]: 
+module topmodule (
+    input clk,
+    input [7:0] in,
+    output [7:0] pedge
+);
+    integer i;
+    reg [7:0] intmp;
+    always @(posedge clk) begin
+        for(i = 0; i < 8; i = i + 1) begin
+            if(intmp[i] != in[i] && in[i] == 1) begin
+                pedge[i] = 1;
+            end
+            else begin
+                pedge[i] = 0;
+            end
+            intmp[i] = in[i];
+        end
+    end
+endmodule

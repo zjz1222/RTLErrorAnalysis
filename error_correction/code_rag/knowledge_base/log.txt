@@ -1,0 +1,39 @@
+[Keyword]: log
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+This design calculates the natural logarithm and the base-10 logarithm of two 32-bit input numbers, `a` and `b`, respectively. The results are scaled by a factor of 1,000,000,000 and output as 128-bit numbers.
+
+[Input Signal Description]:
+- `a[31:0]`: A 32-bit input signal representing the number for which the natural logarithm (ln) is to be calculated.
+- `b[31:0]`: A 32-bit input signal representing the number for which the base-10 logarithm (log10) is to be calculated.
+
+[Output Signal Description]:
+- `a_out[127:0]`: A 128-bit output signal representing the scaled natural logarithm of `a` (ln(a) * 1,000,000,000).
+- `b_out[127:0]`: A 128-bit output signal representing the scaled base-10 logarithm of `b` (log10(b) * 1,000,000,000).
+
+
+[Design Detail]:
+module logarithm(input [31:0] a,b,output [127:0] a_out, b_out);
+  assign a_out = 1000000000 * $ln(a);
+  assign b_out = 1000000000 * $log10(b);
+endmodule
+
+module logarithm_tb;
+  reg [31:0] a;
+  reg [31:0] b;
+  wire [127:0] a_out;
+  wire [127:0] b_out;
+  logarithm uut(a,b,a_out,b_out);
+initial begin
+a=0;b=0;
+#20 a= 123;b=123;
+#20 a =4;b=4; 
+#20 a=234;b=34;
+end
+
+initial 
+  $monitor(" a = %d, b = %d, ln(a) = %d, log10(b) = %d",a,b,a_out,b_out);
+
+endmodule

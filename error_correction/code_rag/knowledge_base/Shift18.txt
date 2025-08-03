@@ -1,0 +1,59 @@
+[Keyword]: Shift18
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a 64-bit arithmetic shift register with load and enable functionality. The register can perform left or right shifts by 1 or 8 bits, depending on the control signals. It also supports loading a new value into the register.
+
+[Input Signal Description]:
+- `clk`: Clock signal that triggers the register operations on its rising edge.
+- `load`: Control signal to load the input data into the register when high.
+- `ena`: Enable signal that allows shifting operations when high.
+- `amount[1:0]`: 2-bit control signal that determines the shift operation:
+  - `00`: Shift left by 1 bit.
+  - `01`: Shift left by 8 bits.
+  - `10`: Arithmetic shift right by 1 bit.
+  - `11`: Arithmetic shift right by 8 bits.
+- `data[63:0]`: 64-bit input data to be loaded into the register when `load` is high.
+
+[Output Signal Description]:
+- `q[63:0]`: 64-bit output register that holds the current value after load or shift operations.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input load,
+    input ena,
+    input [1:0] amount,
+    input [63:0] data,
+    output reg [63:0] q); 
+
+    always @(posedge clk) begin
+        if(load == 1)begin
+            q = data;
+        end
+        else begin
+            if(ena == 1) begin
+                case(amount)
+                    2'b00: q <= q << 1;
+                    2'b01: q <= q << 8;
+                    2'b10: begin
+                        q <= q >> 1;
+                        if(q[63] == 1) begin
+                            q[63] <= 1;
+                        end
+                    end
+                    2'b11: begin
+                        q <= q >> 8;
+                        if(q[63] == 1) begin
+                            q[63:56] <= {8{1'b1}};
+                        end
+                    end
+                endcase
+            end
+        end
+    end
+    
+endmodule
+```

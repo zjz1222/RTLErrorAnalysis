@@ -1,0 +1,41 @@
+[Keyword]: Bugs addsubz
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+This design implements an 8-bit arithmetic unit that can perform either addition or subtraction based on the control signal `dosub`. It also checks if the result of the operation is zero and sets a flag accordingly.
+
+[Input Signal Description]:
+- `dosub`: A control signal (1-bit) that determines the operation. If `dosub` is 0, the circuit performs addition; if 1, it performs subtraction.
+- `a[7:0]`: An 8-bit input operand for the arithmetic operation.
+- `b[7:0]`: Another 8-bit input operand for the arithmetic operation.
+
+[Output Signal Description]:
+- `out[7:0]`: An 8-bit output that holds the result of the arithmetic operation (either `a + b` or `a - b`).
+- `resultiszero`: A 1-bit output flag that is set to 1 if the result of the operation (`out`) is zero, otherwise it is set to 0.
+
+[Design Detail]: 
+```verilog
+// synthesis veriloginputversion verilog2001
+module topmodule ( 
+    input dosub,
+    input [7:0] a,
+    input [7:0] b,
+    output reg [7:0] out,
+    output reg resultiszero
+);//
+
+    always @(*) begin
+        case (dosub)
+          0: out = a+b;
+          1: out = a-b;
+        endcase
+
+        if (out == 0)
+            resultiszero = 1;
+        else
+            resultiszero = 0;
+    end
+
+endmodule
+```

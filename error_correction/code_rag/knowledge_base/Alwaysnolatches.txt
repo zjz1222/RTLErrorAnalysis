@@ -1,0 +1,39 @@
+[Keyword]: Alwaysnolatches
+
+[Design Category]: Control Circuits
+
+[Design Function Description]:
+This design decodes a 16-bit scancode input to determine the direction of a key press. It sets one of the four directional outputs (left, down, right, up) based on the specific scancode received.
+
+[Input Signal Description]:
+scancode[15:0]: A 16-bit input signal representing the scancode of a key press. Specific scancodes correspond to directional keys.
+
+[Output Signal Description]:
+left: A signal that is set to 1 when the scancode corresponds to the left direction key.
+down: A signal that is set to 1 when the scancode corresponds to the down direction key.
+right: A signal that is set to 1 when the scancode corresponds to the right direction key.
+up: A signal that is set to 1 when the scancode corresponds to the up direction key.
+
+[Design Detail]: 
+```verilog
+// synthesis veriloginputversion verilog2001
+module topmodule (
+    input [15:0] scancode,
+    output reg left,
+    output reg down,
+    output reg right,
+    output reg up  ); 
+    
+    always @(*) begin
+        left = 0; down = 0; right = 0; up = 0;
+        case(scancode)
+            16'he06b : left = 1;
+            16'he072 : down = 1;
+            16'he074 : right = 1;
+            16'he075 : up = 1;
+            default : ;
+        endcase
+    end
+
+endmodule
+```

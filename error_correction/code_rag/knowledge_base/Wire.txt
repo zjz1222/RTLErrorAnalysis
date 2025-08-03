@@ -1,0 +1,20 @@
+[Keyword]: Wire
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This is a simple buffer circuit that directly transfers the input signal to the output without any modification.
+
+[Input Signal Description]:
+in: A single-bit input signal that is passed directly to the output.
+
+[Output Signal Description]:
+out: A single-bit output signal that is the same as the input signal.
+
+[Design Detail]: 
+module top_module( 
+  input in, 
+  output out 
+);
+  assign out = in;
+endmodule

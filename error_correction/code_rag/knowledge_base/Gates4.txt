@@ -1,0 +1,28 @@
+[Keyword]: Gates4
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]: 
+This design implements basic logic operations (AND, OR, XOR) on a 4-bit input vector. It computes the logical AND, OR, and XOR of all four input bits and outputs the results separately.
+
+[Input Signal Description]: 
+in[3:0]: A 4-bit input signal where each bit can be independently set to 0 or 1. The bits are used as inputs for the AND, OR, and XOR operations.
+
+[Output Signal Description]: 
+out_and: Outputs the result of the logical AND operation on all four input bits.
+out_or: Outputs the result of the logical OR operation on all four input bits.
+out_xor: Outputs the result of the logical XOR operation on all four input bits.
+
+[Design Detail]: 
+module top_module( 
+    input [3:0] in,
+    output out_and,
+    output out_or,
+    output out_xor
+);
+
+    assign out_and = in[0] & in[1] & in[2] & in[3];
+    assign out_or = in[0] | in[1] | in[2] | in[3];
+    assign out_xor = in[0] ^ in[1] ^ in[2] ^ in[3];
+    
+endmodule

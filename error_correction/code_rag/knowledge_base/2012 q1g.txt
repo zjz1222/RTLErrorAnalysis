@@ -1,0 +1,22 @@
+[Keyword]: 2012 q1g
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This circuit implements a specific logic function using a combination of AND, OR, and NOT gates. It evaluates the input signals and produces an output based on the specified logical expression.
+
+[Input Signal Description]:
+x[4:1]: A 4-bit input vector where each bit (x[1], x[2], x[3], x[4]) is used in the logical expression to determine the output.
+
+[Output Signal Description]:
+f: A single-bit output that is the result of the logical expression applied to the input signals.
+
+[Design Detail]: 
+module topmodule (
+    input [4:1] x,
+    output f
+); 
+
+    assign f = (~x[1] & x[3]) | (~x[2] & ~x[3] & ~x[4]) | (x[1] & ~x[2] & x[3] & ~x[4]) | (x[2] & x[3] & x[4]);
+    
+endmodule

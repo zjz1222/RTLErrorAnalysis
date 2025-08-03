@@ -1,0 +1,48 @@
+[Keyword]: rstgen.sv
+
+[Design Category]: Control Circuits
+
+[Design Function Description]:
+The design is a reset generation circuit. It manages the reset signals in a digital system, ensuring that the system can be properly initialized and reset. It includes a bypass mechanism for test mode operations.
+
+[Input Signal Description]:
+- `clk_i`: Clock input signal, used to synchronize the reset generation process.
+- `rst_ni`: Active-low reset input signal, used to initiate a reset of the system.
+- `test_mode_i`: Input signal indicating whether the system is in test mode, which may alter the behavior of the reset generation.
+
+[Output Signal Description]:
+- `rst_no`: Active-low reset output signal, used to reset other parts of the system.
+- `init_no`: Initialization output signal, indicating the completion of the reset process and readiness for normal operation.
+
+
+[Design Detail]:
+// Copyright 2018 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the "License"); you may not use this file except in
+// compliance with the License. You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
+// Davide Rossi <davide.rossi@unibo.it>
+
+module rstgen (
+    input  logic clk_i,
+    input  logic rst_ni,
+    input  logic test_mode_i,
+    output logic rst_no,
+    output logic init_no
+);
+
+    rstgen_bypass i_rstgen_bypass (
+        .clk_i            ( clk_i       ),
+        .rst_ni           ( rst_ni      ),
+        .rst_test_mode_ni ( rst_ni      ),
+        .test_mode_i      ( test_mode_i ),
+        .rst_no           ( rst_no      ),
+        .init_no          ( init_no     )
+    );
+
+endmodule

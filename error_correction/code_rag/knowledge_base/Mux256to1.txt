@@ -1,0 +1,22 @@
+[Keyword]: Mux256to1
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a 256-to-1 multiplexer. It selects one bit from a 256-bit input vector based on an 8-bit selection signal. The selected bit is then output.
+
+[Input Signal Description]:
+- in[255:0]: A 256-bit wide input vector containing the data from which a single bit will be selected.
+- sel[7:0]: An 8-bit selection signal that determines which bit from the input vector is output. It can represent values from 0 to 255.
+
+[Output Signal Description]:
+- out: A single bit output that corresponds to the bit selected from the input vector based on the value of the selection signal.
+
+[Design Detail]: 
+module topmodule( 
+    input [255:0] in,
+    input [7:0] sel,
+    output out 
+);
+    assign out = in[sel];
+endmodule

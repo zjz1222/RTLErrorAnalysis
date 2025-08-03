@@ -1,0 +1,47 @@
+[Keyword]: Mt2015 q4
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+The circuit implements a combination of two tasks, A and B, which perform specific logical operations on the inputs x and y. The results of these tasks are stored in a temporary wire array ztmp. The final output z is derived from a combination of these intermediate results using bitwise operations.
+
+[Input Signal Description]:
+x: A single-bit input signal.
+y: A single-bit input signal.
+
+[Output Signal Description]:
+z: A single-bit output signal that results from a combination of the outputs of tasks A and B, processed through additional bitwise operations.
+
+[Design Detail]: 
+module topmodule (input x, input y, output z);
+    wire [3:0] ztmp;
+    
+    task A;
+        input x,y;
+        output z;
+        begin
+            z = (x ^ y) & x;
+        end
+    endtask
+    
+    task B;
+        input x,y;
+        output z;
+        begin
+            if(x == y)
+                z = 1;
+            else
+                z = 0;
+        end
+    endtask
+    
+    always @(*) begin
+        A(x,y,ztmp[0]);
+        B(x,y,ztmp[1]);
+        A(x,y,ztmp[2]);
+        B(x,y,ztmp[3]);
+    end
+    
+    assign z = (ztmp[0] | ztmp[1]) ^ (ztmp[2] & ztmp[3]);
+    
+endmodule

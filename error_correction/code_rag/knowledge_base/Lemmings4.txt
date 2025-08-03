@@ -1,0 +1,101 @@
+[Keyword]: Lemmings4
+
+[Design Category]: Control Circuits
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) to control the behavior of a character (Lemming) in a simulation. The Lemming can walk left or right, fall, dig, or splat based on various input conditions such as ground presence, bumping into walls, and digging commands.
+
+[Input Signal Description]:
+- `clk`: Clock signal to synchronize state transitions.
+- `areset`: Asynchronous reset signal that initializes the Lemming to walk left.
+- `bumpleft`: Signal indicating the Lemming has bumped into a wall on the left.
+- `bumpright`: Signal indicating the Lemming has bumped into a wall on the right.
+- `ground`: Signal indicating whether the Lemming is on the ground.
+- `dig`: Command signal to start digging.
+
+[Output Signal Description]:
+- `walkleft`: Signal indicating the Lemming is walking left.
+- `walkright`: Signal indicating the Lemming is walking right.
+- `aaah`: Signal indicating the Lemming is falling.
+- `digging`: Signal indicating the Lemming is digging.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input areset,    // Freshly brainwashed Lemmings walk left.
+    input bumpleft,
+    input bumpright,
+    input ground,
+    input dig,
+    output walkleft,
+    output walkright,
+    output aaah,
+    output digging ); 
+
+    parameter left=3'd0, right=3'd1, falll=3'd2, fallr=3'd3, digl=3'd4, digr=3'd5, splat=3'd6;
+    reg [2:0] state, nextstate;
+    reg [31:0] count;
+
+    always@(posedge clk or posedge areset) begin
+        if(areset)
+            state <= left;
+        else if(state == falll || state == fallr) begin
+            state <= nextstate;
+            count <= count + 1;
+        end
+        else begin
+            state <= nextstate;
+            count <= 0;
+        end
+    end
+
+    always@(*) begin
+        case(state)
+            left: begin
+                if(~ground)         nextstate = falll;
+                else if(dig)        nextstate = digl;
+                else if(bumpleft)  nextstate = right;
+                else                nextstate = left;
+            end
+            right: begin
+                if(~ground)         nextstate = fallr;
+                else if(dig)        nextstate = digr;
+                else if(bumpright) nextstate = left;
+                else                nextstate = right;
+            end
+            falll: begin
+                if(ground) begin
+                    if(count>19)    nextstate = splat;
+                    else            nextstate = left;
+                end
+                else                nextstate = falll;
+            end
+            fallr: begin
+                if(ground) begin
+                    if(count>19)    nextstate = splat;
+                    else            nextstate = right;
+                end
+                else                nextstate = fallr;
+            end
+            digl: begin
+                if(ground)  nextstate = digl;
+                else        nextstate = falll;
+            end
+            digr: begin
+                if(ground)  nextstate = digr;
+                else        nextstate = fallr;
+            end
+            splat: begin
+                nextstate = splat;
+            end
+        endcase
+    end
+
+    assign  walkleft = (state == left);
+    assign  walkright = (state == right);
+    assign  aaah = (state == falll || state == fallr);
+    assign  digging = (state == digl || state == digr);
+
+endmodule
+```

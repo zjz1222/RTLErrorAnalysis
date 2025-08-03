@@ -1,0 +1,24 @@
+[Keyword]: Kmap1
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This circuit implements a NOR gate followed by a NOT gate, effectively creating a 3-input OR gate. The output is high if at least one of the inputs (a, b, or c) is high.
+
+[Input Signal Description]:
+a: A single-bit input signal.
+b: A single-bit input signal.
+c: A single-bit input signal.
+
+[Output Signal Description]:
+out: A single-bit output signal that is the logical OR of inputs a, b, and c.
+
+[Design Detail]: 
+module topmodule(
+    input a,
+    input b,
+    input c,
+    output out
+); 
+    assign out = ~(~a & ~b & ~c);
+endmodule

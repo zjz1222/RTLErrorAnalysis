@@ -1,0 +1,61 @@
+[Keyword]: ece241 2014 q5bhigh
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a simple finite state machine (FSM) with two states, S0 and S1. The FSM transitions between these states based on the input signal `x`. The output `z` is determined by the current state and the input `x`. The FSM is reset to the initial state S0 when the asynchronous reset signal `areset` is asserted.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize state transitions.
+- `areset`: Asynchronous reset signal that initializes the FSM to the starting state S0.
+- `x`: Input signal that influences state transitions and output behavior.
+
+[Output Signal Description]:
+- `z`: Output signal that reflects the current state and input `x`. In state S0, `z` follows the input `x`. In state S1, `z` is the inverse of `x`.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input areset,
+    input x,
+    output z
+); 
+    localparam S0 = 0, S1 = 1;
+    reg [1:0] state;
+    reg [1:0] nextstate;
+    
+    always @(*) begin
+        nextstate = 2'b0;
+        case(1'b1)
+            state[S0] : begin
+                nextstate[S1] = x ? 1'b1 : 1'b0;
+                nextstate[S0] = x ? 1'b0 : 1'b1;
+                z = x;
+            end
+            
+            state[S1] : begin
+                nextstate[S1] = 1'b1;
+                nextstate[S0] = 1'b0;
+                z = ~x;
+            end
+            
+            default : begin
+                nextstate[S0] = 1'b1;
+                nextstate[S1] = 1'b0;
+                z = 1'b0;
+            end
+        endcase
+    end
+    
+    always @(posedge clk or posedge areset) begin
+        if(areset)  begin
+            state <= 2'b0;
+            state[S0] <= 1'b1;
+        end
+        else
+            state <= nextstate;
+    end
+   
+endmodule
+```

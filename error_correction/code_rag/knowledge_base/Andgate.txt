@@ -1,0 +1,22 @@
+[Keyword]: Andgate
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a simple 2-input AND gate. The output is the logical AND of the two input signals.
+
+[Input Signal Description]:
+a: A single-bit input signal.
+b: A single-bit input signal.
+
+[Output Signal Description]:
+out: A single-bit output signal that is the result of the logical AND operation between inputs a and b.
+
+[Design Detail]: 
+module top_module( 
+    input a, 
+    input b, 
+    output out 
+);
+    assign out = a & b;
+endmodule

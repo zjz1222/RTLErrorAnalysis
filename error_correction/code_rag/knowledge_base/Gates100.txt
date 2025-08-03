@@ -1,0 +1,26 @@
+[Keyword]: Gates100
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a logic circuit that performs bitwise reduction operations on a 100-bit input vector. It calculates the logical AND, OR, and XOR of all bits in the input vector.
+
+[Input Signal Description]:
+in[99:0]: A 100-bit wide input signal on which the reduction operations (AND, OR, XOR) are performed.
+
+[Output Signal Description]:
+out_and: Outputs the result of the bitwise AND reduction of all bits in the input vector.
+out_or: Outputs the result of the bitwise OR reduction of all bits in the input vector.
+out_xor: Outputs the result of the bitwise XOR reduction of all bits in the input vector.
+
+[Design Detail]: 
+module top_module( 
+    input [99:0] in,
+    output out_and,
+    output out_or,
+    output out_xor 
+);
+    assign out_and = & in[99:0];
+    assign out_or = | in[99:0];
+    assign out_xor = ^ in[99:0];
+endmodule

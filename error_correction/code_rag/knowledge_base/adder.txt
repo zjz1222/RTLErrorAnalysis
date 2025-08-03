@@ -1,0 +1,25 @@
+[Keyword]: adder
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+This design implements an 8-bit binary adder. It takes two 8-bit binary numbers as inputs and produces an 8-bit sum and a carry-out as outputs.
+
+[Input Signal Description]:
+a[7:0]: An 8-bit input signal representing the first operand for the addition.
+b[7:0]: An 8-bit input signal representing the second operand for the addition.
+
+[Output Signal Description]:
+s[7:0]: An 8-bit output signal representing the sum of the two input operands.
+c: A 1-bit output signal representing the carry-out from the most significant bit of the addition.
+
+
+[Design Detail]:
+//Adder
+ 
+ module adder(a,b,c,s);
+ input [7:0] a,b;
+ output [7:0] s;
+ output c; 
+ assign {c,s}=a+b;
+ endmodule

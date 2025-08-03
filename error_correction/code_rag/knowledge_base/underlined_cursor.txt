@@ -1,0 +1,80 @@
+[Keyword]: underlined_cursor
+
+[Design Category]: Interface Circuits
+
+[Design Function Description]:  
+This design is a VGA controller that interfaces with a PC serial terminal to display ASCII characters on a screen. It includes cursor control functionality, allowing the cursor to move right, move down, or write a new ASCII character at the current cursor position. The design outputs VGA signals to drive a display.
+
+[Input Signal Description]:  
+- `clk`: Clock signal for synchronizing the operations.
+- `rst_n`: Active-low reset signal to initialize the system.
+- `rx`: Serial input for receiving ASCII characters from a PC serial terminal.
+- `key[2:0]`: 3-bit input for cursor control; `key[0]` moves the cursor right, `key[1]` moves the cursor down, and `key[2]` writes a new ASCII character at the current cursor position.
+
+[Output Signal Description]:  
+- `vga_out_r[4:0]`: 5-bit VGA red color output.
+- `vga_out_g[5:0]`: 6-bit VGA green color output.
+- `vga_out_b[4:0]`: 5-bit VGA blue color output.
+- `vga_out_vs`: Vertical sync signal for VGA.
+- `vga_out_hs`: Horizontal sync signal for VGA.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module underlined_cursor
+	(
+	input clk,rst_n,
+	input rx, //ASCII characters to be displayed on screen will come from pc serial terminal
+	input[2:0] key, //key[0] to move cursor to right,key[1] to move cursor down,key[2] to write new ASCII character to current cursor
+	output[4:0] vga_out_r,
+	output[5:0] vga_out_g,
+	output[4:0] vga_out_b,
+	output vga_out_vs,vga_out_hs
+    );
+	 
+	 wire[11:0] pixel_x,pixel_y;
+	 wire video_on;
+	 wire[2:0] rgb;
+	 
+	 
+	 assign vga_out_r=rgb[2]? 5'b111_11:0 ;
+	 assign vga_out_g=rgb[1]? 6'b111_111:0 ;
+	 assign vga_out_b=rgb[0]? 5'b111_11:0 ;
+	 
+
+	 vga_core m0
+	(
+		.clk(clk_out),  //clock must be 25MHz for 640x480 
+		.rst_n(rst_n),
+		.hsync(vga_out_hs),
+		.vsync(vga_out_vs),
+		.video_on(video_on),
+		.pixel_x(pixel_x),
+		.pixel_y(pixel_y)
+    );	
+	 
+	full_screen_gen m1
+	(
+		.clk(clk_out),
+		.rst_n(rst_n),
+		.rx(rx),
+		.key(key), //key[0] to move cursor to right,key[1] to move cursor down,key[2] to write new ASCII character to current cursor
+		.pixel_x(pixel_x),
+		.pixel_y(pixel_y),
+		.video_on(video_on),
+		.rgb(rgb)
+    );
+	
+	 dcm_25MHz m2
+		(// Clock in ports
+		 .clk(clk),      // IN
+		 // Clock out ports
+		 .clk_out(clk_out),     // OUT
+		 // Status and control signals
+		 .RESET(RESET),// IN
+		 .LOCKED(LOCKED)
+	 );      
+	
+endmodule
+

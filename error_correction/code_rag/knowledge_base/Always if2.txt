@@ -1,0 +1,42 @@
+[Keyword]: Always if2
+
+[Design Category]: Control Circuits
+
+[Design Function Description]:
+This design is a control circuit that manages two outputs based on specific conditions. It determines whether to shut off a computer based on CPU temperature and whether to keep driving based on arrival status and gas tank level.
+
+[Input Signal Description]:
+- `cpu_overheated`: A signal indicating whether the CPU is overheated. If true, the computer should be shut off.
+- `arrived`: A signal indicating whether the destination has been reached. If false, the system checks the gas tank status to decide on driving.
+- `gas_tank_empty`: A signal indicating whether the gas tank is empty. If true and the destination is not reached, driving should stop.
+
+[Output Signal Description]:
+- `shut_off_computer`: A control signal that is set to 1 if the CPU is overheated, indicating the computer should be shut off.
+- `keep_driving`: A control signal that is set to 1 if the destination has not been reached and the gas tank is not empty, indicating to keep driving.
+
+[Design Detail]: 
+```verilog
+// synthesis verilog_input_version verilog_2001
+module top_module (
+    input      cpu_overheated,
+    output reg shut_off_computer,
+    input      arrived,
+    input      gas_tank_empty,
+    output reg keep_driving  ); //
+
+    always @(*) begin
+        if (cpu_overheated)
+           shut_off_computer = 1;
+        else
+            shut_off_computer = 0;
+    end
+
+    always @(*) begin
+        if (~arrived)
+            keep_driving = ~gas_tank_empty;
+        else
+            keep_driving = 0;
+    end
+
+endmodule
+```

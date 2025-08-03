@@ -1,0 +1,52 @@
+[Keyword]: Fsm2s
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a JK flip-flop with synchronous reset functionality. The circuit transitions between two states, ON and OFF, based on the inputs j and k. The output reflects the current state of the flip-flop.
+
+[Input Signal Description]:
+- clk: Clock signal used to synchronize state transitions.
+- reset: Synchronous reset signal that sets the state to OFF when asserted.
+- j: Input signal that, when high, transitions the state from OFF to ON.
+- k: Input signal that, when high, transitions the state from ON to OFF.
+
+[Output Signal Description]:
+- out: Output signal that indicates the current state of the flip-flop. It is high when the state is ON and low when the state is OFF.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input reset,    // Synchronous reset to OFF
+    input j,
+    input k,
+    output out); //  
+
+    parameter OFF = 0, ON = 1; 
+    reg state, nextstate;
+
+    always @(*) begin
+        // State transition logic
+        case (state)
+            ON: nextstate <= k ? OFF : ON;
+            OFF: nextstate <= j ? ON : OFF;
+        endcase
+    end
+
+    always @(posedge clk) begin
+        // State flip-flops with synchronous reset
+        if (reset) begin
+            state <= OFF;
+        end
+        else begin
+            state <= nextstate;
+        end
+    end
+
+    // Output logic
+    // assign out = (state == ...);
+    assign out = (state == ON);
+
+endmodule
+```

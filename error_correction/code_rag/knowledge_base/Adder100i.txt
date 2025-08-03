@@ -1,0 +1,90 @@
+[Keyword]: Adder100i
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+This design implements a 100-bit binary adder. It takes two 100-bit binary numbers and an initial carry-in as inputs and produces a 100-bit sum and a 100-bit carry-out as outputs. The adder performs bitwise addition, taking into account the carry from the previous bit.
+
+[Input Signal Description]:
+- a[99:0]: A 100-bit input representing the first binary number to be added.
+- b[99:0]: A 100-bit input representing the second binary number to be added.
+- cin: A single-bit input representing the initial carry-in for the least significant bit addition.
+
+[Output Signal Description]:
+- sum[99:0]: A 100-bit output representing the sum of the input binary numbers a and b, including the carry-in.
+- cout[99:0]: A 100-bit output representing the carry-out from each bit addition, which is used as the carry-in for the next higher bit.
+
+[Design Detail]: 
+```verilog
+module top_module( 
+    input [99:0] a, b,
+    input cin,
+    output [99:0] cout,
+    output [99:0] sum );
+    
+    always @(*) begin
+        for(int i = 0; i < 100; i++) begin
+            if(!i) begin  // Initial addition, use cin as carry-in
+                if(!cin) begin // No carry-in
+                    if(a[i] == 0 && b[i] == 0) begin
+                        sum[i] = 0;
+                        cout[i] = 0;
+                    end
+                    else if((a[i] == 0 && b[i] == 1) || (a[i] == 1 && b[i] == 0)) begin
+                        sum[i] = 1;
+                        cout[i] = 0;
+                    end
+                    else begin
+                        sum[i] = 0;
+                        cout[i] = 1;
+                    end
+                end
+                else begin // With carry-in
+                    if(a[i] == 0 && b[i] == 0) begin
+                        sum[i] = 1;
+                        cout[i] = 0;
+                    end
+                    else if((a[i] == 0 && b[i] == 1) || (a[i] == 1 && b[i] == 0)) begin
+                        sum[i] = 0;
+                        cout[i] = 1;
+                    end
+                    else begin
+                        sum[i] = 1;
+                        cout[i] = 1;
+                    end
+                end
+            end
+            else begin // Subsequent additions, use cout[i - 1] as carry-in
+                if(!cout[i - 1]) begin // No carry-in
+                    if(a[i] == 0 && b[i] == 0) begin
+                        sum[i] = 0;
+                        cout[i] = 0;
+                    end
+                    else if((a[i] == 0 && b[i] == 1) || (a[i] == 1 && b[i] == 0)) begin
+                        sum[i] = 1;
+                        cout[i] = 0;
+                    end
+                    else begin
+                        sum[i] = 0;
+                        cout[i] = 1;
+                    end
+                end
+                else begin // With carry-in
+                    if(a[i] == 0 && b[i] == 0) begin
+                        sum[i] = 1;
+                        cout[i] = 0;
+                    end
+                    else if((a[i] == 0 && b[i] == 1) || (a[i] == 1 && b[i] == 0)) begin
+                        sum[i] = 0;
+                        cout[i] = 1;
+                    end
+                    else begin
+                        sum[i] = 1;
+                        cout[i] = 1;
+                    end
+                end
+            end
+        end
+    end
+endmodule
+```

@@ -1,0 +1,44 @@
+[Keyword]: m2014 q6b
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a state machine with six states (A, B, C, D, E, F) represented by a 3-bit register Y. The state transitions are determined by the current state (y) and an input signal (w). The output Y2 is the second bit of the current state, which can be used to determine the state of the machine.
+
+[Input Signal Description]:
+- y[3:1]: A 3-bit input signal representing the current state of the state machine.
+- w: A 1-bit input signal that influences the state transitions.
+
+[Output Signal Description]:
+- Y2: A 1-bit output signal representing the second bit of the current state, which can be used to identify the state of the machine.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input [3:1] y,
+    input w,
+    output Y2);
+
+    reg [3:1] Y;
+    // A000 B001 C010 D011 E100 F101
+    always @(*) begin
+        case({y, w})
+            4'b0000: Y = 3'b001;
+            4'b0001: Y = 3'b000;
+            4'b0010: Y = 3'b010;
+            4'b0011: Y = 3'b011;
+            4'b0100: Y = 3'b100;
+            4'b0101: Y = 3'b011;
+            4'b0110: Y = 3'b101;
+            4'b0111: Y = 3'b000;
+            4'b1000: Y = 3'b100;
+            4'b1001: Y = 3'b011;
+            4'b1010: Y = 3'b010;
+            4'b1011: Y = 3'b011;
+        endcase
+    end
+    
+    assign Y2 = Y[2];
+
+endmodule
+```

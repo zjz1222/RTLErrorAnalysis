@@ -1,0 +1,41 @@
+[Keyword]: CS450historyshift
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a branch prediction history register. It updates the prediction history based on the outcomes of branch predictions and training data. The history is updated on each clock cycle, and it can be reset asynchronously.
+
+[Input Signal Description]:
+- clk: Clock signal used to synchronize the updates of the prediction history.
+- areset: Asynchronous reset signal that clears the prediction history when asserted.
+- predictvalid: Signal indicating that a prediction has been made and the history should be updated with the prediction result.
+- predicttaken: Signal indicating whether the branch was predicted to be taken.
+- trainmispredicted: Signal indicating that the previous prediction was incorrect, prompting an update with the training data.
+- traintaken: Signal indicating whether the branch was actually taken, used for updating the history when a misprediction occurs.
+- trainhistory[31:0]: 32-bit input representing the historical prediction data used for training when a misprediction is detected.
+
+[Output Signal Description]:
+- predicthistory[31:0]: 32-bit output register that holds the history of branch predictions, updated based on the prediction and training signals.
+
+[Design Detail]: 
+module topmodule(
+    input clk,
+    input areset,
+
+    input predictvalid,
+    input predicttaken,
+    output reg [31:0] predicthistory,
+
+    input trainmispredicted,
+    input traintaken,
+    input [31:0] trainhistory
+);
+    always@(posedge clk or posedge areset) begin
+        if (areset) predicthistory <= 32'b0;
+        else begin
+            if (trainmispredicted) predicthistory <= {trainhistory[30:0],traintaken};
+            else if (predictvalid) predicthistory <= {predicthistory[30:0],predicttaken};
+        end
+    end
+
+endmodule

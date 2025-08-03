@@ -1,0 +1,108 @@
+[Keyword]: 2013 q2bfsm
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a finite state machine (FSM) that transitions through a series of states based on the input signals `x` and `y`, as well as a synchronous active-low reset signal `resetn`. The FSM controls two output signals, `f` and `g`, which are set based on the current state of the machine.
+
+[Input Signal Description]:
+- `clk`: Clock signal that synchronizes the state transitions.
+- `resetn`: Active-low synchronous reset signal that initializes the FSM to the starting state `A`.
+- `x`: Input signal that influences state transitions between `tmp0`, `tmp1`, and `tmp2`.
+- `y`: Input signal that influences state transitions between `g1`, `g1p`, `tmp3`, and `g0p`.
+
+[Output Signal Description]:
+- `f`: Output signal that is set to 1 when the FSM is in state `f1`.
+- `g`: Output signal that is set to 1 when the FSM is in states `g1`, `tmp3`, or `g1p`, and set to 0 in state `g0p`.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input resetn,    // active-low synchronous reset
+    input x,
+    input y,
+    output reg f,
+    output reg g
+); 
+
+    parameter A=4'd0, f1=4'd1, tmp0=4'd2, tmp1=4'd3, tmp2=4'd4, g1=4'd5, g1p=4'd6, tmp3=4'd7, g0p=4'd8;
+    reg [3:0] state, nextstate;
+    
+    always@(*) begin
+        case(state)
+            A: begin
+                if(resetn) 
+                    nextstate = f1;
+                else
+                    nextstate = A;
+            end
+            f1:     nextstate = tmp0;
+            tmp0: begin
+                if(x)
+                    nextstate = tmp1;
+                else
+                    nextstate = tmp0;
+            end
+            tmp1: begin
+                if(~x)
+                    nextstate = tmp2;
+                else
+                    nextstate = tmp1;
+            end
+            tmp2: begin
+                if(x)
+                    nextstate = g1;
+                else
+                    nextstate = tmp0;
+            end
+            g1: begin
+                if(y)
+                    nextstate = g1p;
+                else
+                    nextstate = tmp3;
+            end
+            tmp3: begin
+                if(y)
+                    nextstate = g1p;
+                else
+                    nextstate = g0p;
+            end
+            g1p: begin
+                if(~resetn)
+                    nextstate = A;
+                else
+                    nextstate = g1p;
+            end
+            g0p: begin
+                if(~resetn)
+                    nextstate = A;
+                else
+                    nextstate = g0p;
+            end
+        endcase
+    end
+    
+    always@(posedge clk) begin
+        if(~resetn)
+            state <= A;
+        else
+            state <= nextstate;
+    end
+    
+    always@(posedge clk) begin
+        case(nextstate)
+            f1:     f <= 1'b1;
+            g1,
+            tmp3,
+            g1p:    g <= 1'b1;
+            g0p:    g <= 1'b0;
+            default: begin
+                    f <= 1'b0;
+                    g <= 1'b0;
+            end
+        endcase
+    end
+
+endmodule
+```

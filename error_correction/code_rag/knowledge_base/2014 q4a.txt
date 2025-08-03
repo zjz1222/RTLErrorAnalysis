@@ -1,0 +1,32 @@
+[Keyword]: 2014 q4a
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a sequential logic circuit that implements a flip-flop with additional control signals for enabling, loading, and resetting. The output Q is updated based on the clock signal and the control inputs.
+
+[Input Signal Description]:
+- clk: Clock signal that triggers the update of the output Q.
+- w: Data input used when the enable signal E is active.
+- R: Data input used when the load signal L is active.
+- E: Enable signal that determines whether the input w should be used to update the output.
+- L: Load signal that determines whether the input R should be used to update the output.
+
+[Output Signal Description]:
+- Q: The output of the flip-flop, which is updated based on the control signals and the clock.
+
+[Design Detail]: 
+module topmodule (
+    input clk,
+    input w, R, E, L,
+    output Q
+);
+    
+    reg tmp;
+    //not use <=
+    always @(posedge clk) begin
+        tmp = E ? w : Q;
+        Q = L ? R : tmp;
+    end
+
+endmodule

@@ -1,0 +1,50 @@
+[Keyword]: 2014 q3bfsm
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) with five states (a, b, c, d, e). The FSM transitions between these states based on the input signal `x`. The output `z` is asserted when the FSM is in either state `d` or state `e`.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize state transitions.
+- `reset`: Synchronous reset signal that initializes the FSM to state `a` when asserted.
+- `x`: Input signal that influences state transitions within the FSM.
+
+[Output Signal Description]:
+- `z`: Output signal that is asserted (logic high) when the FSM is in state `d` or state `e`.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input reset,   // Synchronous reset
+    input x,
+    output z
+);
+
+    parameter a = 0, b = 1, c = 2, d = 3, e = 4;
+    reg [2:0] state, nextstate;
+
+    always @(*) begin
+        case (state)
+            a: nextstate = x ? b : a;
+            b: nextstate = x ? e : b;
+            c: nextstate = x ? b : c;
+            d: nextstate = x ? c : b;
+            e: nextstate = x ? e : d;
+        endcase
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            state <= a;
+        end
+        else begin
+            state <= nextstate;
+        end
+    end
+
+    assign z = (state == d || state == e);
+
+endmodule
+```

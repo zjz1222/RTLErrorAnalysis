@@ -1,0 +1,43 @@
+[Keyword]: Modulecseladd
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+This design implements a 32-bit adder using three 16-bit adders. It adds two 32-bit numbers, `a` and `b`, and produces a 32-bit sum. The design uses two different carry-in scenarios for the upper 16 bits to handle the carry from the lower 16 bits.
+
+[Input Signal Description]:
+- `a[31:0]`: A 32-bit input operand for the addition.
+- `b[31:0]`: Another 32-bit input operand for the addition.
+
+[Output Signal Description]:
+- `sum[31:0]`: The 32-bit result of the addition of `a` and `b`.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input [31:0] a,
+    input [31:0] b,
+    output [31:0] sum
+);
+
+    wire cin1, cout1, cin2, cout2, cin3, cout3;
+    wire [15:0] sum1, sum2, sum3, sumh;
+    assign cin1 = 0;
+    assign cin2 = 0;
+    assign cin3 = 1;
+    
+    add16 instance1(.a(a[15:0]), .b(b[15:0]), .cin(cin1), .cout(cout1), .sum(sum1));
+    add16 instance2(.a(a[31:16]), .b(b[31:16]), .cin(cin2), .cout(cout2), .sum(sum2));
+    add16 instance3(.a(a[31:16]), .b(b[31:16]), .cin(cin3), .cout(cout3), .sum(sum3));
+    
+    always @(*) begin
+        case(cout1)
+            0 : sumh = sum2;
+            1 : sumh = sum3;
+        endcase
+    end
+    
+    assign sum = {sumh, sum1};
+    
+endmodule
+```

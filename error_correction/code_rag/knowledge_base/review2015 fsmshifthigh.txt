@@ -1,0 +1,42 @@
+[Keyword]: review2015 fsmshifthigh
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) with five states. The FSM transitions through the states c0, c1, c2, c3, and c4 in a sequential manner. The state transitions are controlled by a synchronous reset signal. The output signal `shiftena` is enabled when the FSM is in any state other than c0.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize state transitions.
+- `reset`: Synchronous reset signal that, when asserted, causes the FSM to transition from state c0 to state c1.
+
+[Output Signal Description]:
+- `shiftena`: A signal that is asserted (set to true) when the FSM is in states c1, c2, c3, or c4, indicating that a shift operation should be enabled.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input reset,      // Synchronous reset
+    output shiftena);
+    
+    parameter c0=3'd0, c1=3'd1, c2=3'd2, c3=3'd3, c4=3'd4;
+    reg [2:0]   state, nextstate;
+    
+    always@(*) begin
+        case(state)
+            c0:     nextstate = reset ? c1 : c0;
+            c1:     nextstate = c2;
+            c2:     nextstate = c3;
+            c3:     nextstate = c4;
+            c4:     nextstate = c0;
+        endcase
+    end
+    
+    always@(posedge clk) begin
+       state <= nextstate; 
+    end
+    
+    assign shiftena = (state==c1 || state==c2 || state==c3 || state==c4);
+    
+endmodule
+```

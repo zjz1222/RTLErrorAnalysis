@@ -1,0 +1,34 @@
+[Keyword]: Multi_Barrel_Shifter8x16x32x
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+The design implements a multi-barrel shifter that can perform left or right shifts on input data of varying bit widths (8, 16, or 32 bits). The specific bit width is determined by the parameter N, and the amount of shift is determined by the parameter M. The direction of the shift (left or right) is controlled by the LR input signal.
+
+[Input Signal Description]:
+- num[N-1:0]: The input data to be shifted, where N can be 8, 16, or 32 bits based on the parameter setting.
+- amt[M-1:0]: The amount by which the input data should be shifted. The width M is typically set to log2(N) to accommodate the maximum shift amount.
+- LR: A control signal that determines the direction of the shift. A typical convention is that a value of 0 might indicate a left shift, and a value of 1 might indicate a right shift.
+
+[Output Signal Description]:
+- out[N-1:0]: The shifted output data, which is the result of shifting the input data 'num' by 'amt' positions in the direction specified by 'LR'.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module Multi_Barrel_Shifter8x16x32x    //adjust param M and N for 8,16,or 32 bits
+#( parameter N=32,
+   parameter M=5)
+	(  input wire[N-1:0] num,
+		input wire[M-1:0] amt,
+		input wire LR,
+		output wire[N-1:0] out	
+		 );
+		 generate 
+			if(N==8) barrel_shifter_8 m0(num,amt,LR,out);
+			else if(N==16) barrel_shifter_16 m1(num,amt,LR,out);
+			else if(N==32) barrel_shifter_32 m2(num,amt,LR,out);			
+		 endgenerate
+
+endmodule

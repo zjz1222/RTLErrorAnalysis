@@ -1,0 +1,23 @@
+[Keyword]: Bugs nand3
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a logic circuit that performs a logical AND operation on three input signals and two constant high signals, followed by a NOT operation on the result. The circuit effectively computes the logical NAND of the three input signals.
+
+[Input Signal Description]:
+a: First input signal for the AND operation.
+b: Second input signal for the AND operation.
+c: Third input signal for the AND operation.
+
+[Output Signal Description]:
+out: The output signal, which is the logical NOT of the AND operation result of the inputs a, b, c, and two constant high signals.
+
+[Design Detail]: 
+module topmodule (input a, input b, input c, output out);//
+    
+    wire outtmp;
+    assign out = ~outtmp;
+    andgate inst1 ( outtmp, a, b, c, 1, 1 );
+
+endmodule

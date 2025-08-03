@@ -1,0 +1,92 @@
+[Keyword]: review2015 fsm
+
+[Design Category]: Control Circuits
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) that detects a specific sequence of input bits ("110") and then performs a series of operations, including shifting and counting. The FSM transitions through various states based on the input data and control signals, ultimately signaling when the sequence has been detected and processed.
+
+[Input Signal Description]:
+- `clk`: Clock signal for synchronizing state transitions.
+- `reset`: Synchronous reset signal to initialize the FSM to the idle state.
+- `data`: Input data signal used to detect the sequence "110".
+- `donecounting`: Input signal indicating the completion of a counting operation.
+- `ack`: Acknowledgment signal to reset the FSM back to the idle state after processing.
+
+[Output Signal Description]:
+- `shiftena`: Output signal that enables shifting operations when the FSM is in states b0, b1, b2, or b3.
+- `counting`: Output signal indicating that the FSM is in the counting state.
+- `done`: Output signal indicating that the FSM has completed its operations and is in the waiting state.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input reset,      // Synchronous reset
+    input data,
+    output shiftena,
+    output counting,
+    input donecounting,
+    output done,
+    input ack );
+
+    parameter idle=4'd0, s1=4'd1, s11=4'd2, s110=4'd3, b0=4'd4, b1=4'd5, b2=4'd6, b3=4'd7, count=4'd8, waiting=4'd9;
+    reg [3:0]   state, nextstate;
+    
+    always@(*) begin
+        case(state)
+            idle: begin
+                if(data==1'b0)
+                    nextstate = idle;
+                else
+                    nextstate = s1;
+            end
+            s1: begin
+                if(data==1'b0)
+                    nextstate = idle;
+                else
+                    nextstate = s11;
+            end
+            s11: begin
+                if(data==1'b0)
+                    nextstate = s110;
+                else
+                    nextstate = s11;
+            end
+            s110: begin
+                if(data==1'b0)
+                    nextstate = idle;
+                else
+                    nextstate = b0;
+            end
+            b0:     nextstate = b1;
+            b1:     nextstate = b2;
+            b2:     nextstate = b3;
+            b3:     nextstate = count;
+            count: begin
+                if(donecounting)
+                    nextstate = waiting;
+                else
+                    nextstate = count;
+            end
+            waiting: begin
+                if(ack)
+                    nextstate = idle;
+                else
+                    nextstate = waiting;
+            end
+        endcase
+    end
+    
+    always@(posedge clk) begin
+        if(reset)
+            state <= idle;
+        else
+            state <= nextstate;
+    end
+    
+    assign  shiftena = (state==b0 || state==b1|| state==b2 || state==b3);
+    assign  counting = (state==count);
+    assign  done = (state==waiting);
+    
+endmodule
+```

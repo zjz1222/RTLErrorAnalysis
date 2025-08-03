@@ -1,0 +1,70 @@
+[Keyword]: Fsm serial
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) that processes an input signal `in` and transitions through different states based on the input and a counter. The FSM has four states: `rd` (read), `rc` (receive), `dn` (done), and `err` (error). The FSM counts up to 8 cycles in the `rc` state and transitions to `dn` or `err` based on the input signal. The `done` output indicates when the FSM has reached the `dn` state.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize the state transitions.
+- `in`: Input signal that influences state transitions.
+- `reset`: Synchronous reset signal that initializes the FSM to the `rd` state and resets the counter `i`.
+
+[Output Signal Description]:
+- `done`: Output signal that is asserted when the FSM reaches the `dn` state, indicating the completion of a specific sequence.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input in,
+    input reset,    // Synchronous reset
+    output done
+); 
+
+    reg [3:0] i;
+    parameter rc = 0, dn = 1, rd = 2, err = 3;
+    reg [2:0] state, nextstate;
+
+    always @(*) begin
+        case (state)
+            rd: nextstate <= in ? rd : rc;
+            rc: begin
+                if ((i == 8) & in) begin
+                    nextstate <= dn;
+                end
+                else if ((i == 8) & (~in)) begin
+                    nextstate <= err;
+                end
+                else begin
+                    nextstate <= rc;
+                end
+            end
+            dn: nextstate <= in ? rd : rc;
+            err: nextstate <= in ? rd : err;
+        endcase
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            state <= rd;
+            i <= 0;
+        end
+        else begin
+            if ((state == rc) && (i != 8)) begin
+                i <= i + 1;
+            end
+            else if (state == err) begin
+                i <= 0;
+            end
+            else if (state == dn) begin
+                i <= 0;
+            end
+            state <= nextstate;
+        end
+    end
+
+    assign done = (state == dn);
+
+endmodule
+```

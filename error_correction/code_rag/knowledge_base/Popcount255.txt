@@ -1,0 +1,29 @@
+[Keyword]: Popcount255
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+The circuit counts the number of '1's in a 255-bit input vector and outputs the count as an 8-bit number.
+
+[Input Signal Description]:
+in[254:0]: A 255-bit input signal where each bit can be either '0' or '1'.
+
+[Output Signal Description]:
+out[7:0]: An 8-bit output signal representing the count of '1's present in the input vector.
+
+[Design Detail]: 
+module top_module( 
+    input [254:0] in,
+    output [7:0] out );
+
+    always @(*) begin
+        out = 0;
+        for(int i = 0; i < 255; i++) begin
+            if(in[i])
+                out = out + 1;
+            else
+                out = out + 0;
+        end
+    end
+    
+endmodule

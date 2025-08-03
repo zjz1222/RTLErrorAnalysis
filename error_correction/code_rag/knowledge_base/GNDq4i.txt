@@ -1,0 +1,19 @@
+[Keyword]: GNDq4i
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This circuit is a simple constant output generator that always outputs a logic low (0).
+
+[Input Signal Description]:
+There are no input signals for this module.
+
+[Output Signal Description]:
+out: A single-bit output that is constantly set to 0.
+
+[Design Detail]: 
+module topmodule (
+    output out
+);
+    assign out = 1'b0;
+endmodule

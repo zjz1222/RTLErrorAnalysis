@@ -1,0 +1,55 @@
+[Keyword]: Fsm ps2
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) with four states. The FSM processes an 8-bit input signal and transitions between states based on the value of the third bit of the input. The FSM starts in the `byte1` state and transitions through `byte2`, `byte3`, and finally to the `dn` state. The `done` output signal is asserted when the FSM reaches the `dn` state.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize state transitions.
+- `in[7:0]`: 8-bit input signal used to determine state transitions based on the value of `in[3]`.
+- `reset`: Synchronous reset signal that initializes the FSM to the `byte1` state.
+
+[Output Signal Description]:
+- `done`: Output signal that is asserted (set to 1) when the FSM reaches the `dn` state, indicating the completion of the state sequence.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input [7:0] in,
+    input reset,    // Synchronous reset
+    output done); //
+
+    parameter byte1 = 1, byte2 = 2, byte3 = 3, dn = 4;
+    reg [3:0] state, nextstate;
+
+    // State transition logic (combinational)
+    always @(*) begin
+        case ({state, in[3]})
+            {byte1, 1'b0}: nextstate = byte1;
+            {byte1, 1'b1}: nextstate = byte2;
+            {byte2, 1'b0}: nextstate = byte3;
+            {byte2, 1'b1}: nextstate = byte3;
+            {byte3, 1'b0}: nextstate = dn;
+            {byte3, 1'b1}: nextstate = dn;
+            {dn, 1'b0}: nextstate = byte1;
+            {dn, 1'b1}: nextstate = byte2;
+        endcase
+    end
+
+    // State flip-flops (sequential)
+    always @(posedge clk) begin
+        if (reset) begin
+            state <= byte1;
+        end
+        else begin
+            state <= nextstate;
+        end
+    end
+
+    // Output logic
+    assign done = (state == dn);
+
+endmodule
+```

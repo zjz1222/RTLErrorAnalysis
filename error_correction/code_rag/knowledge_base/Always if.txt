@@ -1,0 +1,33 @@
+[Keyword]: Always if
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a simple 2-to-1 multiplexer using both continuous assignment and procedural assignment. The multiplexer selects between two input signals, `a` and `b`, based on the combination of two select signals, `sel_b1` and `sel_b2`.
+
+[Input Signal Description]:
+- `a`: A single-bit input signal.
+- `b`: A single-bit input signal.
+- `sel_b1`: A single-bit select signal.
+- `sel_b2`: A single-bit select signal. The combination of `sel_b1` and `sel_b2` determines which input (`a` or `b`) is selected.
+
+[Output Signal Description]:
+- `out_assign`: A single-bit output signal determined by a continuous assignment. It outputs `b` if both `sel_b1` and `sel_b2` are high; otherwise, it outputs `a`.
+- `out_always`: A single-bit output signal determined by a procedural assignment within an always block. It functions identically to `out_assign`, outputting `b` if both `sel_b1` and `sel_b2` are high; otherwise, it outputs `a`.
+
+[Design Detail]: 
+```verilog
+// synthesis verilog_input_version verilog_2001
+module top_module(
+    input a,
+    input b,
+    input sel_b1,
+    input sel_b2,
+    output wire out_assign,
+    output reg out_always   ); 
+
+    assign out_assign = (sel_b1 && sel_b2) ? b : a;
+    always @(*) out_always = (sel_b1 && sel_b2) ? b : a;
+    
+endmodule
+```

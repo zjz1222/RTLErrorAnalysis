@@ -1,0 +1,9 @@
+[Keyword]: Unable to bind wire/reg/memory
+
+[Suggestion]: Replace 'posedge clk' with '*' in sensitivity lists
+
+[Example]:
+// Instead of:
+always @(posedge clk)  
+// Use:
+always @(*)

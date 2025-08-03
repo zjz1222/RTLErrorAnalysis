@@ -1,0 +1,76 @@
+[Keyword]: 2014 q3fsm
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) with two states, A and B. The FSM transitions between these states based on the input signal `s`. The circuit also processes an input signal `w` to form a 3-bit sequence `wnew` and uses a counter to determine when to evaluate the sequence. The output `z` is asserted when the counter reaches a specific value and the sequence `wnew` matches one of the specified patterns.
+
+[Input Signal Description]:
+- `clk`: Clock signal for synchronizing state transitions and operations.
+- `reset`: Synchronous reset signal to initialize the state and other registers.
+- `s`: Input signal that determines state transitions in the FSM.
+- `w`: Input signal that is used to form a 3-bit sequence `wnew`.
+
+[Output Signal Description]:
+- `z`: Output signal that is asserted when the counter reaches 1 and the sequence `wnew` matches one of the patterns: 3'b011, 3'b110, or 3'b101.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input reset,   // Synchronous reset
+    input s,
+    input w,
+    output z
+);
+
+    parameter A = 0, B = 1;
+    reg [2:0] state, nextstate;
+    reg [2:0] wnew;
+    reg [2:0] count;
+
+    always @(*) begin
+        case ({state, s})
+            {A, 1'b0}: nextstate = A;
+            {A, 1'b1}: nextstate = B;
+            {B, 1'b0}: nextstate = B;
+            {B, 1'b1}: nextstate = B;
+        endcase
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            state <= A;
+        end
+        else begin
+            state <= nextstate;
+        end
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            wnew <= 0;
+        end
+        else if (nextstate == B) begin
+            wnew <= {wnew[1:0], w};
+        end
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            count <= 0;
+        end
+        else if (nextstate == B) begin
+            if (count == 3) begin
+                count <= 1;
+            end
+            else begin
+                count <= count + 1;
+            end
+        end
+    end
+
+    assign z = (count == 1 && (wnew == 3'b011 || wnew == 3'b110 || wnew == 3'b101));
+
+endmodule
+```

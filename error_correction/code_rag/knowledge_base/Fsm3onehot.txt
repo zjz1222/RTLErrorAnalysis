@@ -1,0 +1,35 @@
+[Keyword]: Fsm3onehot
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) with four states (A, B, C, D). The FSM transitions between these states based on the input signal 'in'. The output 'out' is determined by the current state of the FSM, specifically when the FSM is in state D.
+
+[Input Signal Description]:
+- in: A single-bit input signal that influences the state transitions of the FSM.
+- state[3:0]: A 4-bit input signal representing the current state of the FSM, where each bit corresponds to one of the states A, B, C, or D.
+
+[Output Signal Description]:
+- nextstate[3:0]: A 4-bit output signal representing the next state of the FSM after evaluating the current state and input.
+- out: A single-bit output signal that is high (1) when the FSM is in state D, and low (0) otherwise.
+
+[Design Detail]: 
+module topmodule(
+    input in,
+    input [3:0] state,
+    output [3:0] nextstate,
+    output out
+); //
+
+    parameter A=0, B=1, C=2, D=3;
+
+    // State transition logic: Derive an equation for each state flip-flop.
+    assign nextstate[A] = state[A] & (~in) | state[C] & (~in);
+    assign nextstate[B] = state[A] & in | state[B] & in | state[D] & in;
+    assign nextstate[C] = state[B] & (~in) | state[D] & (~in);
+    assign nextstate[D] = state[C] & (in);
+
+    // Output logic: 
+    assign out = (state[D] == 1);
+
+endmodule

@@ -1,0 +1,37 @@
+[Keyword]: edgecapture
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design detects the falling edges of a 32-bit input signal. It stores the result of the detected falling edges in a 32-bit output register. A falling edge is detected when a bit changes from 1 to 0.
+
+[Input Signal Description]:
+- clk: Clock signal that triggers the sequential logic on its rising edge.
+- reset: Active-high reset signal that initializes the output to zero.
+- in[31:0]: 32-bit input signal that is processed and stored on each clock cycle.
+
+[Output Signal Description]:
+- out[31:0]: 32-bit output signal that is updated based on the bitwise operation involving the current and previous input values.
+
+[Design Detail]: 
+```verilog
+module TopModule (
+  input clk,
+  input reset,
+  input [31:0] in,
+  output reg [31:0] out
+);
+
+  reg [31:0] d_last;
+
+  always @(posedge clk) begin
+    d_last <= in;
+    if (reset)
+      out <= '0;
+    else
+      out <= out | (~in & d_last);
+  end
+
+endmodule
+```
+//Note: For the previous timestamp of the record in, the prev record should be placed outside the if-else, and it cannot be set to 0 during reset, otherwise it will cause an error.

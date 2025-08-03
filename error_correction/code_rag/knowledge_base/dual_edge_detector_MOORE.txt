@@ -1,0 +1,60 @@
+[Keyword]: dual_edge_detector_MOORE
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+The design is a dual-edge detector implemented using a Moore finite state machine (FSM). It detects both rising and falling edges of an input signal `level` and generates a pulse on the output `edg` whenever an edge is detected.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize the state transitions of the FSM.
+- `rst_n`: Active-low reset signal that initializes the FSM to its starting state (`zero`).
+- `level`: Input signal whose edges (both rising and falling) are to be detected.
+
+[Output Signal Description]:
+- `edg`: Output signal that generates a pulse (active high) whenever a rising or falling edge is detected on the `level` input.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module dual_edge_detector_MOORE(
+	input clk,rst_n,
+	input level, //active high
+	output reg edg
+    );
+	 
+	 //FSM declarations
+	 localparam[1:0] zero=2'd0,
+						  r_edg=2'd1,
+						  one=2'd2,
+						  f_edg=2'd3;
+	 reg[1:0] state_reg,state_nxt;
+	 
+	 //FSM register operation
+	 always @(posedge clk,negedge rst_n) begin
+		if(!rst_n) state_reg<=zero;
+		else state_reg<=state_nxt;
+	 end
+	 
+	 //FSM next-state and output logic
+	 always @* begin
+		state_nxt=state_reg;
+		edg=0;
+		case(state_reg) 
+			zero: if(level) state_nxt=r_edg;
+			r_edg: begin
+						edg=1;
+						if(level) state_nxt=one;
+						else state_nxt=zero;
+					 end
+			one: if(!level) state_nxt=f_edg;
+			f_edg: begin
+						edg=1;
+						state_nxt=zero;
+					 end
+			default: state_nxt=zero;
+		endcase
+	 end
+
+
+endmodule

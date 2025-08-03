@@ -1,0 +1,36 @@
+[Keyword]: Gatesv100
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+The circuit processes a 100-bit input vector to produce three different output vectors. It calculates bitwise operations between adjacent bits of the input vector to generate the outputs: `outboth` for bitwise AND, `outany` for bitwise OR, and `outdifferent` for detecting differences between adjacent bits.
+
+[Input Signal Description]:
+`in[99:0]`: A 100-bit input vector that serves as the source for bitwise operations to generate the outputs.
+
+[Output Signal Description]:
+- `outboth[98:0]`: A 99-bit output vector where each bit is the result of a bitwise AND operation between adjacent bits of the input vector.
+- `outany[99:1]`: A 99-bit output vector where each bit is the result of a bitwise OR operation between adjacent bits of the input vector.
+- `outdifferent[99:0]`: A 100-bit output vector where each bit indicates whether two adjacent bits in the input vector are different (1 if different, 0 if the same).
+
+[Design Detail]: 
+```verilog
+module topmodule( 
+    input [99:0] in,
+    output [98:0] outboth,
+    output [99:1] outany,
+    output [99:0] outdifferent );
+    
+    integer i;
+    
+    always @(*) begin
+        for(i = 0; i < 99; i ++) begin
+            outboth[i] = in[i] & in[i+1];
+            outany[i+1] = in[i] | in[i+1];
+            outdifferent[i] = (in[i] != in[i+1]) ? 1:0;
+        end
+        outdifferent[99] = (in[0] != in[99]) ? 1:0;
+    end
+
+endmodule
+```

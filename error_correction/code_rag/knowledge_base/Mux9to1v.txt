@@ -1,0 +1,36 @@
+[Keyword]: Mux9to1v
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a 16-bit wide, 9-to-1 multiplexer. It selects one of the nine 16-bit input signals (a, b, c, d, e, f, g, h, i) based on a 4-bit selection signal (sel). If the selection signal is outside the range of 0 to 8, the output defaults to 16'hffff.
+
+[Input Signal Description]:
+- a, b, c, d, e, f, g, h, i: Each is a 16-bit input signal.
+- sel[3:0]: A 4-bit selection signal that determines which input signal is routed to the output. It can represent values from 0 to 8.
+
+[Output Signal Description]:
+- out[15:0]: A 16-bit output signal that reflects the value of the selected input signal based on the sel value. If sel is outside the range of 0 to 8, the output is set to 16'hffff.
+
+[Design Detail]: 
+module topmodule( 
+    input [15:0] a, b, c, d, e, f, g, h, i,
+    input [3:0] sel,
+    output [15:0] out );
+    
+    always @(*) begin
+        case(sel)
+            0 : out = a;
+            1 : out = b;
+            2 : out = c;
+            3 : out = d;
+            4 : out = e;
+            5 : out = f;
+            6 : out = g;
+            7 : out = h;
+            8 : out = i;
+            default : out = 16'hffff;
+        endcase
+    end
+
+endmodule

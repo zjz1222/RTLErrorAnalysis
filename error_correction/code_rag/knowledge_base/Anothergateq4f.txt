@@ -1,0 +1,22 @@
+[Keyword]: Anothergateq4f
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]: 
+This circuit implements a simple combinational logic function that performs a logical AND operation between the first input and the negation of the second input. It effectively outputs true only when the first input is true and the second input is false.
+
+[Input Signal Description]: 
+in1: A single-bit input signal that serves as one operand for the AND operation.
+in2: A single-bit input signal that is negated and then used as the second operand for the AND operation.
+
+[Output Signal Description]: 
+out: A single-bit output signal that represents the result of the AND operation between in1 and the negation of in2.
+
+[Design Detail]: 
+module topmodule (
+    input in1,
+    input in2,
+    output out
+);
+    assign out = in1 & (~in2);
+endmodule

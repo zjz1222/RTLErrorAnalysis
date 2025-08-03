@@ -1,0 +1,28 @@
+[Keyword]: Vector3
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design concatenates six 5-bit input signals and a 2-bit constant to form four 8-bit output signals. The concatenation is done in such a way that the total number of bits is 32, which is then divided into four 8-bit outputs.
+
+[Input Signal Description]:
+- a[4:0]: 5-bit input signal
+- b[4:0]: 5-bit input signal
+- c[4:0]: 5-bit input signal
+- d[4:0]: 5-bit input signal
+- e[4:0]: 5-bit input signal
+- f[4:0]: 5-bit input signal
+
+[Output Signal Description]:
+- w[7:0]: 8-bit output signal, part of the concatenated result
+- x[7:0]: 8-bit output signal, part of the concatenated result
+- y[7:0]: 8-bit output signal, part of the concatenated result
+- z[7:0]: 8-bit output signal, part of the concatenated result
+
+[Design Detail]: 
+module top_module (
+    input [4:0] a, b, c, d, e, f,
+    output [7:0] w, x, y, z
+);
+    assign {w, x, y, z} = {a, b, c, d, e, f, 2'b11};
+endmodule

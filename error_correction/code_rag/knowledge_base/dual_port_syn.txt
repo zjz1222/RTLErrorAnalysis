@@ -1,0 +1,40 @@
+[Keyword]: dual_port_syn
+
+[Design Category]: Memory Circuits
+
+[Design Function Description]:  
+This design implements a single-port synchronous RAM with a size of 128k by 3 bits. It uses block RAM to store data. The RAM allows for reading and writing operations, with data being written on the rising edge of the clock when the write enable signal is active.
+
+[Input Signal Description]:  
+- `clk`: Clock signal used to synchronize read and write operations.
+- `we`: Write enable signal. When high, data is written to the RAM at the specified address.
+- `addr[ADDR_WIDTH-1:0]`: Address input used to specify the location in RAM for read or write operations. The width is determined by the parameter `ADDR_WIDTH`.
+- `din[DATA_WIDTH-1:0]`: Data input used to provide the data to be written into the RAM. The width is determined by the parameter `DATA_WIDTH`.
+
+[Output Signal Description]:  
+- `dout[DATA_WIDTH-1:0]`: Data output that provides the data read from the RAM at the specified address. The width is determined by the parameter `DATA_WIDTH`.
+
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module single_port_syn //128k by 3 single port sync ram(uses block ram)
+#(parameter ADDR_WIDTH=16,
+				DATA_WIDTH=3)
+(
+	input clk,
+	input we,
+	input[ADDR_WIDTH-1:0] addr,
+	input[DATA_WIDTH-1:0] din,
+	output[DATA_WIDTH-1:0] dout
+);
+	reg[DATA_WIDTH-1:0] ram[2**ADDR_WIDTH-1:0];
+	reg[ADDR_WIDTH-1:0] addr_q;
+	
+	always @(posedge clk) begin
+		if(we) ram[addr]=din;
+		addr_q<=addr;
+	end
+	assign dout=ram[addr_q];
+endmodule

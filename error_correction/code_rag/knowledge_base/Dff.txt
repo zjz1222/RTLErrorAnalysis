@@ -1,0 +1,25 @@
+[Keyword]: Dff
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a simple D flip-flop. It captures the value of the input signal 'd' on the rising edge of the clock signal 'clk' and outputs it as 'q'. The output 'q' retains its value until the next rising edge of 'clk'.
+
+[Input Signal Description]:
+clk: Clock signal used to synchronize the data capture. The flip-flop captures the input 'd' on the rising edge of this clock.
+d: Data input signal that is captured by the flip-flop on the rising edge of the clock.
+
+[Output Signal Description]:
+q: The output signal that holds the value of the input 'd' after the rising edge of the clock. It retains this value until the next rising edge of the clock.
+
+[Design Detail]: 
+module topmodule (
+    input clk,    // Clocks are used in sequential circuits
+    input d,
+    output reg q );//
+
+    always @(posedge clk) begin
+        q <= d;
+    end
+
+endmodule

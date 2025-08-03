@@ -1,0 +1,36 @@
+[Keyword]: Mt2015 lfsr
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a 3-bit shift register with parallel load capability. The register can either load new data from the input or shift its current contents based on the control signals.
+
+[Input Signal Description]:
+- SW[2:0]: A 3-bit input signal representing the data to be loaded into the register when the load signal is active.
+- KEY[1:0]: A 2-bit input signal where KEY[0] is the clock signal and KEY[1] is the load signal. The load signal determines whether the register loads new data or shifts its current contents.
+
+[Output Signal Description]:
+- LEDR[2:0]: A 3-bit output signal representing the current state of the register.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input [2:0] SW,      // R
+    input [1:0] KEY,     // L and clk
+    output [2:0] LEDR);  // Q
+    
+    wire clk, L;
+    wire [2:0] R;
+    reg [2:0] Q;
+    assign clk = KEY[0];
+    assign L = KEY[1];
+    assign R = SW;
+
+    always @(posedge clk) begin
+        Q <= {(L) ? R[2] : (Q[1] ^ Q[2]), (L) ? R[1] : Q[0], (L) ? R[0] : Q[2]};
+    end
+    
+    assign LEDR = Q;
+
+endmodule
+```

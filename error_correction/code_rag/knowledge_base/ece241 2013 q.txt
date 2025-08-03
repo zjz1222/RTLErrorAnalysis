@@ -1,0 +1,53 @@
+[Keyword]: ece241 2013 q
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) with three states: start, mid, and ends. The FSM transitions between these states based on the input signal `x`. The output `z` is determined by the current state and the input `x`.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize state transitions.
+- `aresetn`: Asynchronous active-low reset signal that initializes the FSM to the start state when asserted low.
+- `x`: Input signal that influences state transitions within the FSM.
+
+[Output Signal Description]:
+- `z`: Output signal that is determined by the current state of the FSM. It is set to 0 in the start and mid states, and it follows the input `x` in the ends state.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input aresetn,    // Asynchronous active-low reset
+    input x,
+    output z ); 
+
+    parameter start = 0, mid = 1, ends = 2;
+    reg [2:0] state, nextstate;
+
+    always @(*) begin
+        case (state)
+            start: nextstate = x ? mid : start;
+            mid: nextstate = x ? mid : ends;
+            ends: nextstate = x ? mid : start;
+        endcase
+    end
+
+    always @(posedge clk or negedge aresetn) begin
+        if (!aresetn) begin
+            state <= start;
+        end
+        else begin
+            state <= nextstate;
+        end
+    end
+
+    always @(*) begin
+        case (state)
+            start: z = 0;
+            mid: z = 0;
+            ends: z = x;
+        endcase
+    end
+
+endmodule
+```

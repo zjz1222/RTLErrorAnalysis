@@ -1,0 +1,23 @@
+[Keyword]: mux2X1
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a 2-to-1 multiplexer. It selects one of the two input signals (in0 or in1) based on the value of the selection signal (sel) and outputs the selected input.
+
+[Input Signal Description]:
+- in0: First input signal to the multiplexer.
+- in1: Second input signal to the multiplexer.
+- sel: Selection signal that determines which input (in0 or in1) is passed to the output. If sel is 1, in1 is selected; if sel is 0, in0 is selected.
+
+[Output Signal Description]:
+- out: The output signal of the multiplexer, which is either in0 or in1 based on the value of the sel signal.
+
+
+[Design Detail]:
+module mux2X1( in0,in1,sel,out);
+input in0,in1;
+input sel;
+output out;
+assign out=(sel)?in1:in0;
+endmodule

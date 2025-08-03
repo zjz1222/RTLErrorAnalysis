@@ -1,0 +1,63 @@
+[Keyword]: 2013 q2afsm
+
+[Design Category]: Control Circuits
+
+[Design Function Description]:
+This design implements a simple priority arbiter using a finite state machine (FSM). The arbiter grants access to one of the three requesters based on priority. The requests are prioritized in the order of r[1], r[2], and r[3]. The FSM transitions between states based on the active request signals and grants access accordingly.
+
+[Input Signal Description]:
+- clk: Clock signal for synchronizing the state transitions.
+- resetn: Active-low synchronous reset signal, which initializes the state machine to the default state when asserted low.
+- r[3:1]: Request signals from three different sources. Each bit represents a request from a different source, with r[1] having the highest priority.
+
+[Output Signal Description]:
+- g[3:1]: Grant signals corresponding to each request. When a particular grant signal is high, it indicates that the corresponding request has been granted access. g[1] corresponds to r[1], g[2] to r[2], and g[3] to r[3].
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input resetn,    // active-low synchronous reset
+    input [3:1] r,   // request
+    output [3:1] g   // grant
+); 
+
+    parameter a=2'd0, b=2'd1, c=2'd2, d=2'd3;
+    reg [1:0] state, nextstate;
+    
+    always@(*) begin
+        case(state)
+            a: begin
+                if(r[1])    nextstate = b;
+                else if(~r[1] & r[2])   nextstate = c;
+                else if(~r[1] & ~r[2] & r[3])   nextstate = d;
+                else    nextstate = a;
+            end
+            b: begin
+                if(r[1])    nextstate = b;
+                else        nextstate = a;
+            end
+            c: begin
+                if(r[2])    nextstate = c;
+                else        nextstate = a;
+            end
+            d: begin
+                if(r[3])    nextstate = d;
+                else        nextstate = a;
+            end
+        endcase
+    end
+
+    always@(posedge clk) begin
+        if(~resetn)
+            state <= a;
+        else
+            state <= nextstate;
+    end
+    
+    assign g[1] = (state == b);
+    assign g[2] = (state == c);
+    assign g[3] = (state == d);
+    
+endmodule
+```

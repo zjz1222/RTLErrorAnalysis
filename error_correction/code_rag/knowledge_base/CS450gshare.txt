@@ -1,0 +1,60 @@
+[Keyword]: CS450gshare
+
+[Design Category]: Control Circuits
+
+[Design Function Description]:
+This design implements a branch predictor using a Pattern History Table (PHT) with a 2-bit saturating counter for each entry. The predictor uses the history of branch outcomes to predict whether a branch will be taken or not. It updates its prediction based on training data, which includes whether the previous prediction was correct or not.
+
+[Input Signal Description]:
+- `clk`: Clock signal for synchronizing the operations.
+- `areset`: Asynchronous reset signal to initialize the predictor.
+- `predictvalid`: Signal indicating if the prediction should be made.
+- `predictpc[6:0]`: 7-bit program counter used for making predictions.
+- `trainvalid`: Signal indicating if training data is available.
+- `traintaken`: Signal indicating if the branch was actually taken.
+- `trainmispredicted`: Signal indicating if the previous prediction was incorrect.
+- `trainhistory[6:0]`: 7-bit history of previous branch outcomes used for training.
+- `trainpc[6:0]`: 7-bit program counter used for training.
+
+[Output Signal Description]:
+- `predicttaken`: Output signal indicating the predicted outcome of the branch (taken or not taken).
+- `predicthistory[6:0]`: 7-bit history of branch outcomes used for making predictions.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input areset,
+
+    input  predictvalid,
+    input  [6:0] predictpc,
+    output predicttaken,
+    output [6:0] predicthistory,
+
+    input trainvalid,
+    input traintaken,
+    input trainmispredicted,
+    input [6:0] trainhistory,
+    input [6:0] trainpc
+);
+    reg [1:0] PHT[127:0];
+
+    always @(posedge clk, posedge areset) begin
+        if (areset) begin
+            predicthistory <= 0;
+            for (integer i=0; i<128; i=i+1) begin
+                PHT[i] <= 2'b01; //initialize to WNT, checkout couter2bc example
+            end
+        end
+        else begin
+            if (trainvalid) begin
+                if (traintaken) PHT[trainhistory ^ trainpc] <= (PHT[trainhistory ^ trainpc] == 2'b11) ? 2'b11 : (PHT[trainhistory ^ trainpc] + 1);
+            	else PHT[trainhistory ^ trainpc] <= (PHT[trainhistory ^ trainpc] == 2'b00) ? 2'b00 : (PHT[trainhistory ^ trainpc] - 1);
+            end
+            if (trainvalid && trainmispredicted) predicthistory <= {trainhistory[6:0], traintaken};
+            else if (predictvalid) predicthistory <= {predicthistory[6:0], predicttaken};
+    	end
+    end
+    assign predicttaken = PHT[predicthistory ^ predictpc][1];//"Not taken" is 0x while "taken" is 1x 
+endmodule
+```

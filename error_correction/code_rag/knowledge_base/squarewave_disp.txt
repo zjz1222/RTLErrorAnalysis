@@ -1,0 +1,77 @@
+[Keyword]: squarewave_disp
+
+[Design Category]: Interface Circuits
+
+[Design Function Description]:
+This design is a VGA display controller that generates square-wave patterns on a screen. It includes functionality to move a cursor and change the waveform pattern using input keys. The design outputs RGB signals and synchronization signals for a VGA display.
+
+[Input Signal Description]:
+- `clk`: Clock input signal for the system.
+- `rst_n`: Active-low reset signal to initialize the system.
+- `key[2:0]`: 3-bit input signal for user interaction. `key[0]` moves the cursor to the right, `key[1]` moves the cursor down, and `key[2]` changes the waveform pattern.
+
+[Output Signal Description]:
+- `vga_out_r[4:0]`: 5-bit red color output for the VGA display.
+- `vga_out_g[5:0]`: 6-bit green color output for the VGA display.
+- `vga_out_b[4:0]`: 5-bit blue color output for the VGA display.
+- `vga_out_vs`: Vertical synchronization signal for the VGA display.
+- `vga_out_hs`: Horizontal synchronization signal for the VGA display.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module squarewave_disp
+	(
+	input clk,rst_n,
+	input[2:0] key, //key[0] to move cursor to right,key[1] to move cursor down, key[2] to change waveform pattern
+	output[4:0] vga_out_r,
+	output[5:0] vga_out_g,
+	output[4:0] vga_out_b,
+	output vga_out_vs,vga_out_hs
+    );
+	 
+	 wire[11:0] pixel_x,pixel_y;
+	 wire video_on;
+	 wire[2:0] rgb;
+	 
+	 
+	 assign vga_out_r=rgb[2]? 5'b111_11:0 ;
+	 assign vga_out_g=rgb[1]? 6'b111_111:0 ;
+	 assign vga_out_b=rgb[0]? 5'b111_11:0 ;
+	 
+
+	 vga_core m0
+	(
+		.clk(clk_out),  //clock must be 25MHz for 640x480 
+		.rst_n(rst_n),
+		.hsync(vga_out_hs),
+		.vsync(vga_out_vs),
+		.video_on(video_on),
+		.pixel_x(pixel_x),
+		.pixel_y(pixel_y)
+    );	
+	 
+	full_screen_gen m1 //generates square-wave patterns with variable cursor location
+	(
+		.clk(clk_out),
+		.rst_n(rst_n),
+		.key(key),
+		.pixel_x(pixel_x),
+		.pixel_y(pixel_y),
+		.video_on(video_on),
+		.rgb(rgb)
+    );
+	
+	 dcm_25MHz m2
+		(// Clock in ports
+		 .clk(clk),      // IN
+		 // Clock out ports
+		 .clk_out(clk_out),     // OUT
+		 // Status and control signals
+		 .RESET(RESET),// IN
+		 .LOCKED(LOCKED)
+	 );      
+	
+endmodule
+

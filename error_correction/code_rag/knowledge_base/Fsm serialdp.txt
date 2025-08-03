@@ -1,0 +1,91 @@
+[Keyword]: Fsm serialdp
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) that receives serial data input, processes it, and checks for parity. The FSM transitions through various states to capture an 8-bit data byte, checks for parity, and indicates when the data byte is ready and valid.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize the state transitions and data processing.
+- `in`: Serial data input signal that provides the bits to be captured and processed.
+- `reset`: Synchronous reset signal that initializes the FSM to the idle state and clears data.
+
+[Output Signal Description]:
+- `outbyte[7:0]`: 8-bit output that holds the captured data byte when the FSM indicates the data is ready.
+- `done`: Signal that indicates when the data byte is fully captured and valid, based on parity checking.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input in,
+    input reset,    // Synchronous reset
+    output [7:0] outbyte,
+    output done
+); //
+
+    // Modify FSM and datapath from Fsmserialdata
+    parameter idle = 4'd0, start = 4'd1, trans0 = 4'd2,trans1 = 4'd3, trans2 = 4'd4, trans3 = 4'd5;
+    parameter trans4 = 4'd6, trans5 = 4'd7, trans6 = 4'd8, trans7 = 4'd9, stop = 4'd10, err = 4'd11, pari = 4'd12;
+    reg [3:0] state, nextstate;
+    reg [7:0] data;
+    wire odd, resetp;
+    reg donereg;
+
+    always @(*) begin
+        case (state)
+            idle:   nextstate <= in ? idle : start;
+            start:  nextstate <= trans0;
+            trans0: nextstate <= trans1;
+            trans1: nextstate <= trans2;
+            trans2: nextstate <= trans3;
+            trans3: nextstate <= trans4;
+            trans4: nextstate <= trans5;
+            trans5: nextstate <= trans6;
+            trans6: nextstate <= trans7;
+            trans7: nextstate <= pari;
+            pari:   nextstate <= in ? idle : err;
+            err:    nextstate <= in ? idle : err;
+        endcase
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            state <= idle;
+        end
+        else begin
+            state <= nextstate;
+        end
+    end
+
+    // New: Add parity checking.
+    always @(posedge clk) begin
+        if (reset) begin
+            data <= 8'd0;
+            resetp <= 1'b1;
+            donereg <= 1'b0;
+        end
+        else begin
+            if (nextstate == trans0 || nextstate == trans1 || nextstate == trans2 || nextstate == trans3 || nextstate == trans4 || nextstate == trans5 || nextstate == trans6 || nextstate == trans7) begin
+                data <= {in, data[7:1]};
+            end
+            else if (nextstate == start) begin
+                data <= 8'd0;
+                resetp <= 1'b0;
+                donereg <= 1'b0;
+            end
+            else if (nextstate == idle) begin
+                donereg <= odd;
+            end
+            else if (nextstate == pari) begin
+                resetp <= 1'b1;
+            end
+        end
+    end
+
+    assign done = donereg;
+    assign outbyte = done ? data : 8'd0;
+    parity parmod(clk, reset | resetp, in, odd);
+
+endmodule
+```

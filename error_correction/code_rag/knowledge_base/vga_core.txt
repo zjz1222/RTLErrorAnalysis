@@ -1,0 +1,98 @@
+[Keyword]: vga_core
+
+[Design Category]: Interface Circuits
+
+[Design Function Description]:
+The design is a VGA controller core that generates synchronization signals and pixel coordinates for a 640x480 VGA display. It manages the horizontal and vertical scanning process, producing the necessary timing signals (hsync and vsync) and indicating when the video signal should be active (video_on).
+
+[Input Signal Description]:
+- clk: Clock signal, must be 25MHz for proper VGA timing.
+- rst_n: Active-low reset signal, used to initialize the counters and synchronization signals.
+
+[Output Signal Description]:
+- hsync: Horizontal synchronization signal, used to indicate the end of a horizontal line.
+- vsync: Vertical synchronization signal, used to indicate the end of a vertical frame.
+- video_on: Signal indicating when the video output should be active (i.e., when the pixel data should be displayed).
+- pixel_x: 12-bit signal representing the current horizontal pixel position.
+- pixel_y: 12-bit signal representing the current vertical pixel position.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module vga_core(
+	input clk,rst_n, //clock must be 25MHz for 640x480 
+	output hsync,vsync,
+	output reg video_on,
+	output[11:0] pixel_x,pixel_y
+    );		//650x480 parameters
+	 localparam HD=640, //Horizontal Display
+					HR=16, //Right Border
+					HRet=96, //Horizontal Retrace
+					HL=48, //Left Border
+					
+					VD=480, //Vertical Display
+					VB=10, //Bottom Border
+					VRet=2, //Vertical Retrace
+					VT=33; //Top Border
+	reg[11:0] vctr_q=0,vctr_d; //counter for vertical scan
+	reg[11:0] hctr_q=0,hctr_d; //counter for vertical scan
+	reg hsync_q=0,hsync_d;
+	reg vsync_q=0,vsync_d;
+	//vctr and hctr register operation
+	always @(posedge clk,negedge rst_n) begin
+		if(!rst_n) begin
+			vctr_q<=0;
+			hctr_q<=0;
+			vsync_q<=0;
+			hsync_q<=0;
+		end
+		else begin
+			vctr_q<=vctr_d;
+			hctr_q<=hctr_d;
+			vsync_q<=vsync_d;
+			hsync_q<=hsync_d;
+		end
+	end
+	
+	always @* begin
+		vctr_d=vctr_q;
+		hctr_d=hctr_q;
+		video_on=0;
+		hsync_d=1; 
+		vsync_d=1; 
+		
+		if(hctr_q==HD+HR+HRet+HL-1) hctr_d=0; //horizontal counter
+		else hctr_d=hctr_q+1'b1;
+		
+		if(vctr_q==VD+VB+VRet+VT-1) vctr_d=0; //vertical counter
+		else if(hctr_q==HD+HR+HRet+HL-1) vctr_d=vctr_q+1'b1;
+		
+		if(hctr_q<HD && vctr_q<VD) video_on=1; //video_on 
+		
+		if( (hctr_d>=HD+HR) && (hctr_d<=HD+HR+HRet-1) ) hsync_d=0; //horizontal sync 
+		if( (vctr_d>=VD+VB) && (vctr_d<=VD+VB+VRet-1) ) vsync_d=0; //vertical sync
+				
+	end
+		assign vsync=vsync_q;
+		assign hsync=hsync_q;
+		assign pixel_x=hctr_q;
+		assign pixel_y=vctr_q;
+
+endmodule

@@ -1,0 +1,35 @@
+[Keyword]: Modulepos
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+The module `topmodule` instantiates another module `moda` which takes four inputs and produces two outputs. The specific function of `moda` is not detailed in the provided code, but it likely performs a combinational logic operation on the inputs `a`, `b`, `c`, and `d` to produce the outputs `out1` and `out2`.
+
+[Input Signal Description]:
+- `a`: A single-bit input signal.
+- `b`: A single-bit input signal.
+- `c`: A single-bit input signal.
+- `d`: A single-bit input signal.
+
+These inputs are likely used by the `moda` module to perform some logic operations.
+
+[Output Signal Description]:
+- `out1`: A single-bit output signal produced by the `moda` module.
+- `out2`: A single-bit output signal produced by the `moda` module.
+
+The outputs are the result of the logic operations performed by `moda` on the inputs.
+
+[Design Detail]: 
+```verilog
+module topmodule ( 
+    input a, 
+    input b, 
+    input c,
+    input d,
+    output out1,
+    output out2
+);
+    moda instance1(out1, out2, a, b, c, d);
+endmodule
+```
+Note: The specific functionality of `moda` is not provided, so the exact operations on the inputs to produce the outputs are unknown.

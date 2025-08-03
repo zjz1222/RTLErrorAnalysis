@@ -1,0 +1,27 @@
+[Keyword]: Mt2015 q4bv
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a simple equality comparator. It compares two input signals, x and y, and outputs a high signal (1) if they are equal, otherwise it outputs a low signal (0).
+
+[Input Signal Description]:
+x: A single-bit input signal.
+y: A single-bit input signal.
+
+[Output Signal Description]:
+z: A single-bit output signal that is set to 1 if x and y are equal, otherwise it is set to 0.
+
+[Design Detail]: 
+module topmodule ( 
+  input x, 
+  input y, 
+  output reg z 
+);
+  always @(*) begin
+    if(x == y)
+      z = 1;
+    else
+      z = 0;
+  end
+endmodule

@@ -1,0 +1,32 @@
+[Keyword]: Tbtff
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a testbench for a T flip-flop (TFF). The T flip-flop toggles its output on each clock cycle when the T input is high, and it can be reset asynchronously.
+
+[Input Signal Description]:
+- clk: Clock signal used to drive the T flip-flop.
+- reset: Asynchronous reset signal to initialize or reset the flip-flop.
+- t: Toggle input signal for the T flip-flop. When high, it causes the flip-flop to toggle its state on each clock cycle.
+
+[Output Signal Description]:
+- q: Output of the T flip-flop, representing the current state of the flip-flop.
+
+[Design Detail]: 
+module topmodule ();
+    reg clk, reset, t;
+    reg q;
+    initial begin
+        clk = 0;
+        reset = 0;
+        t = 0;
+        #15 reset = 1;
+        #10 reset = 0;
+        #10 t = 1;
+    end
+    always begin
+        #5 clk = ~clk;
+    end
+    tff tff1(clk, reset, t, q);
+endmodule

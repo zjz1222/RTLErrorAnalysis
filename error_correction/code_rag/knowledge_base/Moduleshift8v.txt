@@ -1,0 +1,40 @@
+[Keyword]: Moduleshift8v
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a shift register with three stages, each stage being an 8-bit D flip-flop. The output `q` can be selected from the input `d` or from the output of any of the three stages using a 2-bit selection signal `sel`.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize the flip-flops.
+- `d[7:0]`: 8-bit input data signal that is fed into the first stage of the shift register.
+- `sel[1:0]`: 2-bit selection signal used to choose which stage's output is assigned to the output `q`.
+
+[Output Signal Description]:
+- `q[7:0]`: 8-bit output signal that reflects the selected data from the input or one of the three stages of the shift register based on the `sel` signal.
+
+[Design Detail]: 
+```verilog
+module topmodule ( 
+    input clk, 
+    input [7:0] d, 
+    input [1:0] sel, 
+    output [7:0] q 
+);
+    
+    wire [7:0] q1, q2, q3;
+    mydff8 instance1(.clk(clk), .d(d), .q(q1));
+    mydff8 instance2(.clk(clk), .d(q1), .q(q2));
+    mydff8 instance3(.clk(clk), .d(q2), .q(q3));
+    
+    always @(*) begin
+        case(sel)
+            0 : q = d;
+            1 : q = q1;
+            2 : q = q2;
+            3 : q = q3;
+        endcase
+    end
+
+endmodule
+```

@@ -1,0 +1,48 @@
+[Keyword]: Tbtb2
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+The design is a testbench for a sequential circuit module named `q7`. It generates a clock signal and provides a sequence of input signals to test the behavior of the `q7` module. The testbench initializes the inputs and changes them at specific time intervals to observe the output behavior of the `q7` module.
+
+[Input Signal Description]:
+- `clk`: A clock signal that toggles every 5 time units, used to synchronize the operations in the `q7` module.
+- `in`: A single-bit input signal that changes at specified intervals to test different scenarios in the `q7` module.
+- `s[2:0]`: A 3-bit selection or control signal that changes at specified intervals to test different states or conditions in the `q7` module.
+
+[Output Signal Description]:
+- `out`: The output signal from the `q7` module, which is observed to verify the correct operation of the module under different input conditions.
+
+[Design Detail]: 
+```verilog
+module topmodule();
+    reg clk, in;
+    reg [2:0] s;
+    reg out;
+    initial begin
+        clk = 0;
+        s = 2;
+        in = 0;
+        #10 s = 6;
+        #10 begin
+            s = 2;
+            in = 1;
+        end
+        #10 begin
+            s = 7;
+            in = 0;
+        end
+        #10 begin
+            s = 0;
+            in = 1;
+        end
+        #30 in = 0;
+    end
+    always begin
+        #5 clk = ~clk;
+    end
+    
+    q7 q7test(clk, in, s, out);
+    
+endmodule
+```

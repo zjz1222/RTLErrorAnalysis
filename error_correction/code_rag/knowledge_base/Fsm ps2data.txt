@@ -1,0 +1,70 @@
+[Keyword]: Fsm ps2data
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) that processes a sequence of 8-bit input data bytes. It stores three consecutive bytes and outputs them as a 24-bit value when the FSM reaches a specific state, indicating that the sequence is complete.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize the state transitions and data storage.
+- `in[7:0]`: 8-bit input signal representing the data byte to be processed.
+- `reset`: Synchronous reset signal that initializes the FSM to its starting state and clears the stored data.
+
+[Output Signal Description]:
+- `outbytes[23:0]`: 24-bit output signal that holds the concatenated three bytes of data when the FSM reaches the 'done' state.
+- `done`: A signal indicating that the FSM has reached the 'done' state, meaning the 24-bit output is valid.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input [7:0] in,
+    input reset,    // Synchronous reset
+    output [23:0] outbytes,
+    output done); //
+
+    // FSM from fsmps2
+    parameter b1 = 1, b2 = 2, b3 = 3, dn = 4;
+    reg [2:0] state, nextstate;
+    reg [23:0] data;
+
+    always @(*) begin
+        case ({state, in[3]})
+            {b1, 1'b0}: nextstate = b1;
+            {b1, 1'b1}: nextstate = b2;
+            {b2, 1'b0}: nextstate = b3;
+            {b2, 1'b1}: nextstate = b3;
+            {b3, 1'b0}: nextstate = dn;
+            {b3, 1'b1}: nextstate = dn;
+            {dn, 1'b0}: nextstate = b1;
+            {dn, 1'b1}: nextstate = b2;
+        endcase
+    end
+
+    always @(posedge clk) begin
+        if (reset) begin
+            state <= b1;
+        end
+        else begin
+            state <= nextstate;
+        end
+    end
+
+    assign done = (state == dn);
+
+    // New: Datapath to store incoming bytes.
+    always @(posedge clk) begin
+        if (reset) begin
+            data <= 24'd0;
+        end
+        else begin
+            data[23:16] <= data[15:8];
+            data[15:8] <= data[7:0];
+            data[7:0]  <= in;
+        end
+    end
+
+    assign outbytes = (done) ? data : 24'd0;
+
+endmodule
+```

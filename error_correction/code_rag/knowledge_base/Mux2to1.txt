@@ -1,0 +1,23 @@
+[Keyword]: Mux2to1
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a 2-to-1 multiplexer. It selects one of the two input signals, `a` or `b`, based on the value of the selection signal `sel`.
+
+[Input Signal Description]:
+- `a`: One of the input signals to the multiplexer.
+- `b`: The other input signal to the multiplexer.
+- `sel`: A selection signal that determines which input signal is passed to the output. If `sel` is 1, `b` is selected; if `sel` is 0, `a` is selected.
+
+[Output Signal Description]:
+- `out`: The output signal of the multiplexer, which is either `a` or `b` depending on the value of `sel`.
+
+[Design Detail]: 
+module topmodule( 
+    input a, b, sel,
+    output out ); 
+
+    assign out = sel ? b : a;
+    
+endmodule

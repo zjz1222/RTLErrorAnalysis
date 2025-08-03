@@ -1,0 +1,21 @@
+[Keyword]: Xnorgate
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a 1-bit XNOR gate. The circuit outputs the logical XNOR of two input signals, which is true when both inputs are the same (either both 0 or both 1).
+
+[Input Signal Description]:
+a: A 1-bit input signal.
+b: A 1-bit input signal.
+
+[Output Signal Description]:
+out: A 1-bit output signal that represents the XNOR of inputs a and b. It is high (1) when both inputs are the same and low (0) otherwise.
+
+[Design Detail]: 
+module top_module( 
+    input a, 
+    input b, 
+    output out );
+    assign out = ~(a ^ b);
+endmodule

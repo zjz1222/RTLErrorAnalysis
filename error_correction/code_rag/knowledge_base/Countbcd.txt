@@ -1,0 +1,36 @@
+[Keyword]: Countbcd
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a 4-digit BCD (Binary-Coded Decimal) counter. The counter increments on each clock cycle and resets to zero when it reaches 9999. The `ena` signals indicate when each BCD digit is at its maximum value of 9, enabling the next higher digit to increment.
+
+[Input Signal Description]:
+- `clk`: Clock signal that drives the counter.
+- `reset`: Synchronous active-high reset signal that initializes the counter to zero when asserted.
+
+[Output Signal Description]:
+- `ena[3:1]`: Enable signals for each BCD digit, indicating when the respective digit is at its maximum value of 9.
+- `q[15:0]`: 16-bit output representing the 4-digit BCD counter value, with each 4-bit segment representing a single BCD digit.
+
+[Design Detail]: 
+```verilog
+module TopModule (
+  input clk,
+  input reset,
+  output [3:1] ena,
+  output reg [15:0] q
+);
+
+  wire [3:0] enable = { q[11:0]==12'h999, q[7:0]==8'h99, q[3:0] == 4'h9, 1'b1};
+  assign ena = enable[3:1];
+  always @(posedge clk)
+    for (int i=0;i<4;i++) begin
+      if (reset || (q[i*4 +:4] == 9 && enable[i]))
+        q[i*4 +:4] <= 0;
+      else if (enable[i])
+        q[i*4 +:4] <= q[i*4 +:4]+1;
+    end
+
+endmodule
+```

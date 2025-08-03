@@ -1,0 +1,24 @@
+[Keyword]: Conditional
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+The circuit is designed to find the minimum value among four 8-bit input values. It compares the inputs in pairs and determines the smallest value through a series of conditional assignments.
+
+[Input Signal Description]:
+a[7:0], b[7:0], c[7:0], d[7:0]: These are four 8-bit input signals representing the values to be compared to find the minimum.
+
+[Output Signal Description]:
+min[7:0]: This is an 8-bit output signal that holds the minimum value among the four input signals a, b, c, and d.
+
+[Design Detail]: 
+module top_module (
+    input [7:0] a, b, c, d,
+    output [7:0] min
+);
+    wire [7:0] min_mid, min_mid1, min_mid2;
+    assign min_mid = (a < b) ? a : b;
+    assign min_mid1 = (c < min_mid) ? c : min_mid;
+    assign min_mid2 = (d < min_mid1) ? d : min_mid1;
+    assign min = min_mid2;
+endmodule

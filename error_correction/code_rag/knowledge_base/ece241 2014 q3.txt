@@ -1,0 +1,31 @@
+[Keyword]: ece241 2014 q3
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a simple combinational logic circuit that generates a 4-bit output vector based on the logical operations performed on two input signals, c and d.
+
+[Input Signal Description]:
+c: A single-bit input signal.
+d: A single-bit input signal.
+
+[Output Signal Description]:
+muxin[3:0]: A 4-bit output vector where each bit is the result of a different logical operation on the inputs c and d. Specifically:
+- muxin[0] is the result of the logical OR operation between c and d.
+- muxin[1] is a constant 0.
+- muxin[2] is the logical NOT of d.
+- muxin[3] is the result of the logical AND operation between c and d.
+
+[Design Detail]: 
+module topmodule (
+    input c,
+    input d,
+    output [3:0] muxin
+); 
+    
+    assign muxin[0] = c | d;
+    assign muxin[1] = 0;
+    assign muxin[2] = ~d;
+    assign muxin[3] = c & d;
+
+endmodule

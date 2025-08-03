@@ -1,0 +1,48 @@
+[Keyword]: review2015 fsmseq
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) with five states (a, b, c, d, e). The FSM transitions between states based on the input signal `data`. The output signal `startshifting` is asserted when the FSM reaches state `e`.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize state transitions.
+- `reset`: Synchronous reset signal that initializes the FSM to state `a` when asserted.
+- `data`: Input signal that influences state transitions within the FSM.
+
+[Output Signal Description]:
+- `startshifting`: Output signal that is asserted (set to high) when the FSM is in state `e`, indicating that a specific condition has been met.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input reset,      // Synchronous reset
+    input data,
+    output startshifting);
+
+    parameter a = 0, b = 1, c = 2, d = 3, e = 4;
+    reg [2:0] state, nextstate;
+
+    always @(*) begin
+        case (state)
+            a: nextstate = data ? b : a;
+            b: nextstate = data ? c : a;
+            c: nextstate = data ? c : d;
+            d: nextstate = data ? e : a;
+            e: nextstate = data ? e : e;
+        endcase
+    end
+    always @(posedge clk) begin
+        if (reset) begin
+            state <= a;
+        end
+        else begin
+            state <= nextstate;
+        end
+    end
+
+    assign startshifting = (state == e);
+
+endmodule
+```

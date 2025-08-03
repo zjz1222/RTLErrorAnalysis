@@ -1,0 +1,65 @@
+[Keyword]: counter.sv
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a generic up/down counter. The counter can be configured to count upwards or downwards based on the `down_i` input. It supports loading a new value, synchronous clearing, and can indicate an overflow condition. The width of the counter is parameterizable, allowing for flexibility in the number of bits used for counting.
+
+[Input Signal Description]:
+- `clk_i`: Clock input signal for synchronizing the counter operations.
+- `rst_ni`: Active-low reset input signal to initialize the counter.
+- `clear_i`: Synchronous clear input signal to reset the counter value.
+- `en_i`: Enable input signal to allow the counter to increment or decrement.
+- `load_i`: Input signal to load a new value into the counter.
+- `down_i`: Input signal to determine the counting direction (up or down).
+- `d_i[WIDTH-1:0]`: Data input signal for loading a specific value into the counter.
+
+[Output Signal Description]:
+- `q_o[WIDTH-1:0]`: Output signal representing the current value of the counter.
+- `overflow_o`: Output signal indicating if the counter has overflowed.
+
+
+[Design Detail]:
+// Copyright 2018 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the "License"); you may not use this file except in
+// compliance with the License. You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
+// Author: Florian Zaruba
+// Description: Generic up/down counter
+
+module counter #(
+    parameter int unsigned WIDTH = 4,
+    parameter bit STICKY_OVERFLOW = 1'b0
+)(
+    input  logic             clk_i,
+    input  logic             rst_ni,
+    input  logic             clear_i, // synchronous clear
+    input  logic             en_i,    // enable the counter
+    input  logic             load_i,  // load a new value
+    input  logic             down_i,  // downcount, default is up
+    input  logic [WIDTH-1:0] d_i,
+    output logic [WIDTH-1:0] q_o,
+    output logic             overflow_o
+);
+    delta_counter #(
+        .WIDTH          (WIDTH),
+        .STICKY_OVERFLOW (STICKY_OVERFLOW)
+    ) i_counter (
+        .clk_i,
+        .rst_ni,
+        .clear_i,
+        .en_i,
+        .load_i,
+        .down_i,
+        .delta_i({{WIDTH-1{1'b0}}, 1'b1}),
+        .d_i,
+        .q_o,
+        .overflow_o
+    );
+endmodule

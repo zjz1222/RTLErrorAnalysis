@@ -1,0 +1,53 @@
+[Keyword]: CS450counter2bc
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a 2-bit saturating counter, often used in branch prediction logic. The counter has four states: Strongly Not Taken (SNT), Weakly Not Taken (WNT), Weakly Taken (WT), and Strongly Taken (ST). The state transitions are determined by the `trainvalid` and `traintaken` signals, which indicate whether a branch prediction should be updated and whether the branch was actually taken, respectively.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize state transitions.
+- `areset`: Asynchronous reset signal that initializes the state to Weakly Not Taken (WNT).
+- `trainvalid`: Signal indicating whether the current training data is valid and should be used to update the state.
+- `traintaken`: Signal indicating whether the branch was actually taken, used to determine the next state.
+
+[Output Signal Description]:
+- `state[1:0]`: 2-bit output representing the current state of the saturating counter, which can be one of the four states: SNT, WNT, WT, or ST.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input areset,
+    input trainvalid,
+    input traintaken,
+    output reg [1:0] state
+);
+    localparam SNT = 0, WNT = 1, WT = 2, ST = 3;
+    wire [1:0] nextstate;
+    
+    always@(*)begin
+        if (trainvalid) begin
+            case(state)
+                SNT: nextstate = traintaken?WNT:SNT;
+                WNT: nextstate = traintaken?WT:SNT;
+                WT: nextstate = traintaken?ST:WNT;
+                ST: nextstate = traintaken?ST:WT;
+            endcase
+        end else begin
+            case(state)
+                SNT: nextstate = SNT;
+                WNT: nextstate = WNT;
+                WT: nextstate = WT;
+                ST: nextstate = ST;
+            endcase
+        end
+    end
+
+    always@(posedge clk or posedge areset) begin
+        if (areset) state <= WNT;
+        else state <= nextstate;
+    end
+
+endmodule
+```

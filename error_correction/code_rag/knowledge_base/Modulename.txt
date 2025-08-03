@@ -1,0 +1,24 @@
+[Keyword]: Modulename
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+The module 'topmodule' instantiates another module 'moda' which takes four input signals and produces two output signals. The specific function of 'moda' is not provided, but it likely performs a combinational logic operation based on the inputs.
+
+[Input Signal Description]:
+a, b, c, d: These are individual input signals to the 'topmodule', which are passed to the 'moda' instance. The specific role of each input depends on the internal logic of 'moda'.
+
+[Output Signal Description]:
+out1, out2: These are the output signals from the 'moda' instance, which are also the outputs of the 'topmodule'. Their values depend on the logic implemented within 'moda'.
+
+[Design Detail]: 
+module topmodule ( 
+    input a, 
+    input b, 
+    input c,
+    input d,
+    output out1,
+    output out2
+);
+    moda instance1(.in1(a), .in2(b), .in3(c), .in4(d), .out1(out1), .out2(out2),);
+endmodule

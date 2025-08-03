@@ -1,0 +1,27 @@
+[Keyword]: Kmap3
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This circuit implements a specific logic function using a combination of AND, OR, and NOT gates. The output is determined by the logical expression: (~b & c) | (a & c) | (a & ~c).
+
+[Input Signal Description]:
+- a: A single-bit input signal.
+- b: A single-bit input signal.
+- c: A single-bit input signal.
+- d: A single-bit input signal (not used in the logic expression).
+
+[Output Signal Description]:
+- out: A single-bit output signal that is the result of the logical expression applied to the inputs a, b, and c.
+
+[Design Detail]: 
+module topmodule(
+    input a,
+    input b,
+    input c,
+    input d,
+    output out  ); 
+    
+    assign out = (~b & c) | (a & c) | (a & ~c);
+
+endmodule

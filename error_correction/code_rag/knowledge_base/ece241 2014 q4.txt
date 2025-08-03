@@ -1,0 +1,32 @@
+[Keyword]: ece241 2014 q4
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design is a sequential logic circuit that uses a 3-bit register `Q` to perform bitwise operations based on the input `x` at every positive edge of the clock signal `clk`. The output `z` is determined by the logical negation of the OR operation on the bits of `Q`.
+
+[Input Signal Description]:
+- `clk`: Clock signal that triggers the sequential logic on its positive edge.
+- `x`: Input signal used to modify the state of the 3-bit register `Q`.
+
+[Output Signal Description]:
+- `z`: Output signal that is the negation of the OR operation on the bits of the register `Q`. It is initially set to 1.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input clk,
+    input x,
+    output z
+); 
+    reg [2:0] Q;
+    initial z = 1;
+    always @(posedge clk) begin
+        Q[0] = Q[0] ^ x;
+        Q[1] = ~Q[1] & x;
+        Q[2] = ~Q[2] | x;
+        z = ~(Q[0] | Q[1] | Q[2]); 
+    end
+
+endmodule
+```

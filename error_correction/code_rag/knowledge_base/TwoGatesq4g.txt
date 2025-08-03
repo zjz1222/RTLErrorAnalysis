@@ -1,0 +1,28 @@
+[Keyword]: TwoGatesq4g
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a logic circuit that performs a specific combination of XOR and XNOR operations on three input signals. It first computes the XNOR of `in1` and `in2`, and then XORs the result with `in3`.
+
+[Input Signal Description]:
+- `in1`: A single-bit input signal.
+- `in2`: A single-bit input signal.
+- `in3`: A single-bit input signal.
+
+[Output Signal Description]:
+- `out`: A single-bit output signal that is the result of the operation `(~(in1 ^ in2)) ^ in3`.
+
+[Design Detail]: 
+```verilog
+module topmodule (
+    input in1,
+    input in2,
+    input in3,
+    output out
+);
+
+    assign out = (~(in1 ^ in2)) ^ in3;
+    
+endmodule
+```

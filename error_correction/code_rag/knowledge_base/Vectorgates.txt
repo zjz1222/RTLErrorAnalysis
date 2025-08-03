@@ -1,0 +1,31 @@
+[Keyword]: Vectorgates
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design performs bitwise OR, logical OR, and bitwise NOT operations on two 3-bit input vectors. It outputs the results of these operations.
+
+[Input Signal Description]:
+a[2:0]: A 3-bit input vector.
+b[2:0]: Another 3-bit input vector.
+
+[Output Signal Description]:
+out_or_bitwise[2:0]: The result of the bitwise OR operation between inputs a and b.
+out_or_logical: The result of the logical OR operation between inputs a and b, which checks if either a or b is non-zero.
+out_not[5:0]: A 6-bit output where the upper 3 bits are the bitwise NOT of b and the lower 3 bits are the bitwise NOT of a.
+
+[Design Detail]: 
+module top_module( 
+    input [2:0] a,
+    input [2:0] b,
+    output [2:0] out_or_bitwise,
+    output out_or_logical,
+    output [5:0] out_not
+);
+
+    assign out_or_bitwise = a | b;
+    assign out_or_logical = a || b;
+    assign out_not[5:3] = ~b;
+    assign out_not[2:0] = ~a;
+    
+endmodule

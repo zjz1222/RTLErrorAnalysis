@@ -1,0 +1,52 @@
+[Keyword]: dual_edge_detector_MEALY
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+The design is a dual-edge detector implemented using a Mealy state machine. It detects both rising and falling edges of an input signal `level` and generates a pulse on the output `edg` whenever an edge is detected.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize the state transitions.
+- `rst_n`: Active-low reset signal to initialize the state machine to a known state (`zero`).
+- `level`: Input signal whose edges (both rising and falling) are to be detected.
+
+[Output Signal Description]:
+- `edg`: Output signal that generates a pulse (active-high) whenever a rising or falling edge is detected on the `level` input.
+
+
+[Design Detail]:
+`timescale 1ns / 1ps
+
+module dual_edge_detector_MEALY(
+	input clk,rst_n,
+	input level, //active-high
+	output reg edg
+    );
+	 //FSM declarations
+	 localparam zero=1'b0,
+					one=1'b1;
+	reg state_reg,state_nxt;
+	
+	//FSM register operation
+	always @(posedge clk,negedge rst_n) begin
+		if(!rst_n) state_reg<=zero;
+		else state_reg<=state_nxt;
+	end
+	//FSM next-state and output logic
+	always @* begin
+		state_nxt=state_reg;
+		edg=0;
+			case(state_reg)
+			zero: if(level) begin
+						edg=1;
+						state_nxt=one;
+					end
+			one: if(!level) begin
+						edg=1;
+						state_nxt=zero;
+					end
+			default: state_nxt=zero;
+			endcase	
+	end
+
+endmodule

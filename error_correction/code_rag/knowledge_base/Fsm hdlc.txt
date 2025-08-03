@@ -1,0 +1,68 @@
+[Keyword]: Fsm hdlc
+
+[Design Category]: Sequential Logic
+
+[Design Function Description]:
+This design implements a finite state machine (FSM) that processes a serial input stream. The FSM transitions through a series of states based on the input signal and generates specific output signals when certain conditions are met. It detects sequences of consecutive '1's and outputs signals to indicate when a sequence should be discarded, flagged, or when an error occurs.
+
+[Input Signal Description]:
+- `clk`: Clock signal used to synchronize state transitions.
+- `reset`: Synchronous reset signal that initializes the FSM to the starting state (`none`).
+- `in`: Serial input signal that the FSM processes to determine state transitions.
+
+[Output Signal Description]:
+- `disc`: Output signal that is asserted when the FSM reaches the `discard` state, indicating a sequence should be discarded.
+- `flag`: Output signal that is asserted when the FSM reaches the `flagg` state, indicating a valid sequence has been detected.
+- `err`: Output signal that is asserted when the FSM reaches the `error` state, indicating an error condition due to an invalid sequence.
+
+[Design Detail]: 
+```verilog
+module topmodule(
+    input clk,
+    input reset,    // Synchronous reset
+    input in,
+    output disc,
+    output flag,
+    output err);
+
+    parameter none=4'd0, one=4'd1, two=4'd2, three=4'd3, four=4'd4, five=4'd5, six=4'd6, error=4'd7, discard=4'd8, flagg=4'd9;
+    reg [3:0]   state, nextstate;
+    
+    always@(*) begin
+        case({state, in})
+            {none, 1'b0}:   nextstate = none;
+            {none, 1'b1}:   nextstate = one;
+            {one, 1'b0}:    nextstate = none;
+            {one, 1'b1}:    nextstate = two;
+            {two, 1'b0}:    nextstate = none;
+            {two, 1'b1}:    nextstate = three;
+            {three, 1'b0}:  nextstate = none;
+            {three, 1'b1}:  nextstate = four;
+            {four, 1'b0}:   nextstate = none;
+            {four, 1'b1}:   nextstate = five;
+            {five, 1'b0}:   nextstate = discard;
+            {five, 1'b1}:   nextstate = six;
+            {six, 1'b0}:    nextstate = flagg;
+            {six, 1'b1}:    nextstate = error;
+            {error, 1'b0}:  nextstate = none;
+            {error, 1'b1}:  nextstate = error;
+            {discard, 1'b0}:nextstate = none;
+            {discard, 1'b1}:nextstate = one;
+            {flagg, 1'b0}:  nextstate = none;
+            {flagg, 1'b1}:  nextstate = one;
+        endcase
+    end
+    
+    always@(posedge clk) begin
+        if(reset)
+            state <= none;
+        else
+            state <= nextstate;
+    end
+    
+    assign  disc = (state == discard);
+    assign  flag = (state == flagg);
+    assign  err = (state == error);
+    
+endmodule
+```

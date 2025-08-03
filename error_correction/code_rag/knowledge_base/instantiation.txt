@@ -1,0 +1,11 @@
+[Keyword]: Invalid module instantiation
+
+[Suggestion]: Implement all logic directly in TopModule without instantiating sub-modules
+
+[Example]:
+// Instead of:
+module TopModule(...);
+    SubModule instance1 (...);  // Error
+endmodule
+
+// Implement the logic directly in TopModule

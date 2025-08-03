@@ -1,0 +1,63 @@
+[Keyword]: Bcdadd4
+
+[Design Category]: Arithmetic Circuits
+
+[Design Function Description]:
+The design implements a 16-bit Binary Coded Decimal (BCD) adder. It takes two 16-bit BCD numbers and a carry-in as inputs and produces a 16-bit BCD sum and a carry-out. The addition is performed in 4-bit BCD segments.
+
+[Input Signal Description]:
+- a[15:0]: A 16-bit input representing the first BCD number.
+- b[15:0]: A 16-bit input representing the second BCD number.
+- cin: A single-bit input representing the initial carry-in for the least significant BCD digit.
+
+[Output Signal Description]:
+- cout: A single-bit output representing the carry-out from the most significant BCD digit.
+- sum[15:0]: A 16-bit output representing the BCD sum of the inputs a and b.
+
+[Design Detail]: 
+```verilog
+module topmodule( 
+    input [15:0] a, b,
+    input cin,
+    output cout,
+    output [15:0] sum );
+    
+    wire [15:0] couttmp;
+    bcdfadd fadd(.a(a[3:0]), .b(b[3:0]), .cin(cin), .cout(couttmp[0]), .sum(sum[3:0]));
+    assign cout = couttmp[12];
+    generate
+        genvar i;
+        for(i = 4; i < 16; i = i + 4) begin:adder
+            bcdfadd fadd(.a(a[i + 3:i]), .b(b[i + 3:i]), .cin(couttmp[i-4]), .cout(couttmp[i]), .sum(sum[i + 3:i]));
+        end
+    endgenerate
+
+endmodule
+
+// Below solution is designed by @Lysias-1998
+
+// module topmodule( 
+//     input [15:0] a, b,
+//     input cin,
+//     output cout,
+//     output [15:0] sum );
+    
+//     wire [4:0] c;
+    
+//     assign c[0] = cin;
+//     assign cout = c[4];
+//     generate
+//         genvar i;
+//         for (i = 0; i < 4; i = i + 1) begin : adders
+//             bcdfadd thebcdfadders ( 
+//                 .a(a[i*4+3 : i*4]), 
+//                 .b(b[i*4+3 : i*4]), 
+//                 .cin(c[i]), 
+//                 .cout(c[i+1]), 
+//                 .sum(sum[i*4+3 : i*4]) 
+//             );
+//         end
+//     endgenerate
+
+// endmodule
+```

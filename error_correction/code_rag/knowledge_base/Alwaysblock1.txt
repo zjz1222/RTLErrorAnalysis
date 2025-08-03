@@ -1,0 +1,30 @@
+[Keyword]: Alwaysblock1
+
+[Design Category]: Combinational Logic
+
+[Design Function Description]:
+This design implements a simple 2-input AND gate using both continuous assignment and procedural assignment within an always block. The circuit outputs the logical AND of two input signals.
+
+[Input Signal Description]:
+a: A single-bit input signal.
+b: A single-bit input signal.
+
+[Output Signal Description]:
+out_assign: A wire output that continuously outputs the result of the logical AND operation between inputs a and b.
+out_alwaysblock: A register output that outputs the result of the logical AND operation between inputs a and b, updated whenever there is a change in inputs a or b.
+
+[Design Detail]: 
+```verilog
+// synthesis verilog_input_version verilog_2001
+module top_module(
+    input a, 
+    input b,
+    output wire out_assign,
+    output reg out_alwaysblock
+);
+
+    assign out_assign = a & b;
+    always @(*) out_alwaysblock = a & b;
+    
+endmodule
+```
