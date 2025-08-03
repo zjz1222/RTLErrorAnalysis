@@ -24,7 +24,7 @@ def main():
     
     design, refined_description =  rule_based_description_refinement(llm, description, task_prompt)
     succeed, status, fail_messages = run_design(design, ref, testbench)
-    corrected_design = 
+    corrected_design = design
     if not succeed:
         design, meta_format = multimodal_data_conversion(description, design)
         refine_description = refine_description + f"[Multimodal Data Meta Format]:{refine_description}\n"
@@ -38,7 +38,7 @@ def main():
                 if iter_with_example == False:
                     example_prompt = ""
                 
-                design =  two_stage_localization_and_correction(llm, description, design, ref, testbench, example_prompt, max_iter):
+                design =  two_stage_localization_and_correction(llm, description, design, ref, testbench, example_prompt, max_iter)
                 succeed, status, fail_message = run_design(design, ref, testbench)
                 
                 if not succeed:
